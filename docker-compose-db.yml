@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=users_db
+     - MYSQL_USER=app
+     - MYSQL_PASSWORD=secretkey
+     - MYSQL_TCP_PORT=3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+     - 3306:3306
+    networks:
+      - backend
+    expose:
+      - 3306
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+  mysql-create-schema:
+    container_name: mysql-create-schema
+    image: mysql:8.0
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    volumes:
+       - ${PWD}/mysql_schema.sql:/schema.sql
+    command: /bin/bash -c "sleep 60 && echo [book_shop_Users]Creating Mysql schema... && mysql -h mysql --user=app --password=secretkey users_db<"/schema.sql""
+  cassandra:
+    image: cassandra:3.0.0
+    container_name: cassandra
+    restart: always
+    environment:
+      - MAX_HEAP_SIZE=256M
+      - HEAP_NEWSIZE=128M
+      - CASSANDRA_BROADCAST_ADDRESS=host.docker.internal
+      - CASSANDRA_SEEDS=host.docker.internal
+    ports:
+      - 7000:7000
+      - 7001:7001
+      - 7199:7199
+      - 9042:9042
+      - 9160:9160
+    networks:
+      - backend
+    expose:
+    - 7000
+    - 9042
+    healthcheck:
+        test: ["CMD", "cqlsh", "-u cassandra", "-p cassandra" ,"-e describe keyspaces"]
+        interval: 20s
+        timeout: 10s
+        retries: 5
+    volumes:
+      - cass-data:/var/lib/cassandra/commitlog
+      - cass-data:/var/lib/cassandra/hints
+      - cass-data:/var/lib/cassandra/data
+      - cass-data:/var/lib/cassandra/saved_caches
+      - cass-data:/var/log/cassandra
+  cassandra-create-keyspace:
+    container_name: cassandra-create-keyspace
+    image: cassandra:3.0.0
+    depends_on:
+      - cassandra   
+    networks:
+      - backend
+    volumes:
+       - ${PWD}/cassandra_schema.cql:/schema.cql
+    command: /bin/bash -c "sleep 60 && echo [book_shop_oauth]Loading cassandra -keyspace... && cqlsh cassandra -f /schema.cql"
+volumes:
+  mysql-data:
+  cass-data:
+networks:
+    frontend:
+        driver: bridge
+    backend:
+        driver: bridge

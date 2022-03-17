@@ -1,0 +1,229 @@
+version: '3.8'
+
+services:
+  user-api:
+    container_name: userapi
+    image: laithrafid/user-api:latest
+    restart: always
+    environment:
+     - USERS_API_ADDRESS=:8080
+     - MYSQLDB_DRIVER=mysql
+     - MYSQLDB_SOURCE=root:root@tcp(localhost:3306)/users_db?charset=utf8
+    volumes:
+      - apis-data:/app
+    ports:
+     - 8082:8080
+    networks:
+      - backend
+    expose:
+      - 3306
+    healthcheck:
+      test: [ "curl", "-XGET" , "localhost/ping" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+  items-api:
+    container_name: itemsapi
+    image: laithrafid/items-api:latest
+    restart: always
+    environment:
+      - ITEMS_API_ADDRESS=:8082
+      - CASS_DB_SOURCE=192.168.0.42:9042
+      - CASS_DB_KEYSPACE=oauth
+      - CAS_DB_NODES=172.18.9.140:4092,172.18.9.140:4093
+    volumes:
+      - apis-data:/app
+    ports:
+     - 3306:3306
+    networks:
+      - backend
+    expose:
+      - 3306
+    healthcheck:
+      test: [ "curl", "-XGET" , "localhost/ping" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+  oauth-api:
+    container_name: oauthapi
+    image: laithrafid/oauth-api:latest
+    environment:
+      - OAUTH_API_ADDRESS=:8081
+      - ELASTIC_HOSTS="http://192.168.0.42:9200"
+    volumes:
+      - apis-data:/app
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    healthcheck:
+      test: curl -X GET localhost:5601 >/dev/null || exit 1
+      interval: 20s
+      timeout: 10s
+      retries: 5
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=users_db
+     - MYSQL_USER=app
+     - MYSQL_PASSWORD=secretkey
+     - MYSQL_TCP_PORT=3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+     - 3306:3306
+    networks:
+      - backend
+    expose:
+      - 3306
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+  mysql-create-schema:
+    container_name: mysql-create-schema
+    image: mysql:8.0
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    volumes:
+       - ${PWD}/mysql_schema.sql:/schema.sql
+    command: /bin/bash -c "sleep 60 && echo [book_shop_Users]Creating Mysql schema... && mysql -h mysql --user=app --password=secretkey users_db<"/schema.sql""
+  cassandra:
+    image: cassandra:3.0.0
+    container_name: cassandra
+    restart: always
+    environment:
+      - MAX_HEAP_SIZE=256M
+      - HEAP_NEWSIZE=128M
+      - CASSANDRA_BROADCAST_ADDRESS=host.docker.internal
+      - CASSANDRA_SEEDS=host.docker.internal
+    ports:
+      - 7000:7000
+      - 7001:7001
+      - 7199:7199
+      - 9042:9042
+      - 9160:9160
+    networks:
+      - backend
+    expose:
+    - 7000
+    - 9042
+    healthcheck:
+        test: ["CMD", "cqlsh", "-u cassandra", "-p cassandra" ,"-e describe keyspaces"]
+        interval: 20s
+        timeout: 10s
+        retries: 5
+    volumes:
+      - cass-data:/var/lib/cassandra/commitlog
+      - cass-data:/var/lib/cassandra/hints
+      - cass-data:/var/lib/cassandra/data
+      - cass-data:/var/lib/cassandra/saved_caches
+      - cass-data:/var/log/cassandra
+  cassandra-create-keyspace:
+    container_name: cassandra-create-keyspace
+    image: cassandra:3.0.0
+    depends_on:
+      - cassandra   
+    networks:
+      - backend
+    volumes:
+       - ${PWD}/cassandra_schema.cql:/schema.cql
+    command: /bin/bash -c "sleep 60 && echo [book_shop_oauth]Loading cassandra -keyspace... && cqlsh cassandra -f /schema.cql"
+  elasticsearch:
+    container_name: elastic-container
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.0.1
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+      - ELASTIC_PASSWORD=secretkey
+    # configs:
+    #   - source: elastic_config
+    #     target: /usr/share/elasticsearch/config/elasticsearch.yml
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    networks:
+      - backend
+    ports:
+      - 9200:9200
+      - 9300:9300
+    healthcheck:
+        test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+        interval: 20s
+        timeout: 10s
+        retries: 5
+  kibana:
+    container_name: kibana-container
+    image: docker.elastic.co/kibana/kibana:7.0.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    # configs:
+    #   - source: kibana_config
+    #     target: /usr/share/kibana/config/kibana.yml
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+    networks:
+      - backend
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    healthcheck:
+      test: curl -X GET localhost:5601 >/dev/null || exit 1
+      interval: 20s
+      timeout: 10s
+      retries: 5
+  logstash:
+    container_name: logstash-container
+    image: docker.elastic.co/logstash/logstash:7.0.1
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    # configs:
+    #   - source: logstash_config
+    #     target: /usr/share/logstash/config/logstash.yml
+    volumes:
+      - logstash-data:/usr/share/logstash/data
+    networks:
+      - backend
+    depends_on:
+      - elasticsearch
+      - kibana
+    ports:
+      - 5044:5044
+      - 5000:5000/tcp
+      - 5000:5000/udp
+      - 9600:9600
+    healthcheck:
+      test: curl -X GET localhost:5044 >/dev/null || exit 1
+      interval: 20s
+      timeout: 10s
+      retries: 5    
+#configs:
+#   elastic_config:
+#     file: ./elasticsearch.yml
+#   logstash_config:
+#     file: ./logstash.yml
+#   kibana_config:
+#     file: ./kibana.yml
+
+volumes:
+  apis-data:
+  mysql-data:
+  cass-data:
+  es-data:
+  kibana-data:
+  logstash-data:
+networks:
+    frontend:
+        driver: bridge
+    backend:
+        driver: bridge
+    
+    
