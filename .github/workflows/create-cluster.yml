@@ -23,27 +23,28 @@ jobs:
     steps:
      - name: Checkout
        uses: actions/checkout@v2
-     - name: Setup S3cmd cli tool
-       uses: laithrafid/s3cmd@v1.3
-       with:
-          provider: digitalocean
-          region: 'NYC3'
-          access_key: ${{ secrets.SPACES_ACCESS_KEY_ID }}
-          secret_key: ${{ secrets.SPACES_SECRET_ACCESS_KEY }}
-     - name: Interact with object storage          
-       run: |
-          buck="kube-terraform-state"
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
      - name: Setup Terraform
        uses: hashicorp/setup-terraform@v1
        with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-     - name: Terraform Init
-       run: terraform init  
+     - name: select workspace
+       run: terraform workspace select dev 
+       
+     - name: Terraform Format
+       id: fmt
+       run: terraform fmt -check -recursive 
      
+     - name: Terraform Init 
+       run: terraform init 
+    
+     - name: Terraform Validate
+       id: validate
+       run: terraform validate -no-color
     
      - name: Terraform Plan
-       run: terraform plan
+       id: plan
+       run: terraform plan  -no-color
+       continue-on-error: true
   
      - name: Terraform Apply
        run: terraform apply -auto-approve

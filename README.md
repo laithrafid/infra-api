@@ -94,8 +94,12 @@ docker compose -f docker-compose-api.yml up -d
 on Push tag k8s.* events to the main branch, this workflow will run
  `terraform init`, `terraform fmt`, and `terraform plan` if no errors then `terraform apply` will be executed.
 
-
-# contributions 
+## 1.What the project does ?
+## 2.Why the project is useful ?
+## 3. How users can get started with the project ?
+## 4. Where users can get help with your project ?
+## 5. Who maintains and contributes to the project , How to contribute?
+## contributions 
 if you want to contribute to a project, the simplest way is to:
 1. Find a repo fork button
 3. Clone it to your local system
