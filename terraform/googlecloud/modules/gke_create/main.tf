@@ -14,7 +14,7 @@ locals {
 resource "google_project" "project" {
   name            = var.project_name
   project_id      = local.project_id
-  folder_id  = google_folder.terraform.name
+  folder_id       = google_folder.terraform.name
   billing_account = "${var.billing_account}"
   org_id          = "${var.org_id}"
 }
@@ -34,18 +34,19 @@ resource "google_service_account" "default" {
 }
 
 resource "google_container_cluster" "primary" {
-  name     = var.project_name + var.environment + var.cluster_name
-  location = var.cluser_location
+  name     = "${var.project_name}-${var.environment}-${var.cluster_name}"
+  location = var.cluster_region
   remove_default_node_pool = true
-  initial_node_count       = 1
 }
 
 resource "google_container_node_pool" "primary_nodes" {
-  name       = "${var.cluser_name}-nodepool"
-  location   = var.cluser_location
-  cluster    = google_container_cluster.primary.name
-  node_count = var.max_nodes
-
+  name          = "${var.project_name}-${var.environment}-${var.cluster_name}-nodepool"
+  location      = var.cluster_region
+  cluster       = google_container_cluster.primary.name
+  autoscaling   = var.auto_scale
+  min_node_count = var.min_nodes
+  max_node_count = var.max_nodes
+  }
   node_config {
     preemptible  = true
     machine_type = var.worker_size
@@ -56,4 +57,3 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/cloud-platform"
     ]
   }
-}
