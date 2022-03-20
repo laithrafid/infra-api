@@ -41,3 +41,7 @@ variable "min_nodes" {
   description = "minmum number of nudes in cluster"
   default = 1
 }
+variable "write_kubeconfig" {
+  type        = bool
+  default     = false
+}

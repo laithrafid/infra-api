@@ -1,17 +1,17 @@
 terraform { 
-#   cloud {
-#      token = var.TERRAFORMCLOUD_TOKEN
-#      organization = "my-org"
-#      hostname = "app.terraform.io"
-#   workspaces {
-#       name = ""
-#       tags = ["app:mine"]
-#     }
-#    }
+  cloud {
+     token = var.TERRAFORMCLOUD_TOKEN
+     organization = "bayt"
+     hostname = "app.terraform.io"
+  workspaces {
+      name = "intra-api"
+      tags = ["APIs:digitalocean"]
+    }
+   }
   required_providers {
     digitalocean = {
       source = "digitalocean/digitalocean"
-      version = "2.18.0"
+      version = ">= 2.18.0"
     }
   }
 }
