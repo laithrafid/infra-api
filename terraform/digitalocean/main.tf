@@ -11,7 +11,7 @@ module "doks_create" {
     DIGITALOCEAN_TOKEN = var.DIGITALOCEAN_TOKEN
     project_name       = var.project_name
     environment        = var.environment
-    cluser_name        = local.cluser_name
+    cluster_name       = local.cluster_name
     cluster_region     = var.cluster_region
     cluster_version    = var.cluster_version
     worker_size        = var.worker_size
@@ -21,7 +21,8 @@ module "doks_create" {
 }
 module "doks_manage" {
     source = "./modules/doks_manage"
-    cluser_name      = module.doks-cluster.cluster_id
-    cluster_id       = module.doks-cluster.cluster_name
-    write_kubeconfig = var.write_kubeconfig
+    DIGITALOCEAN_TOKEN = var.DIGITALOCEAN_TOKEN
+    cluster_name      = module.doks_create.cluster_name
+    cluster_id        = module.doks_create.cluster_id
+    write_kubeconfig  = var.write_kubeconfig
 }

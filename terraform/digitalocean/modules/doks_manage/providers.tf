@@ -16,7 +16,7 @@ terraform {
 }
 
 provider "digitalocean" {
-  DIGITALOCEAN_TOKEN = var.DIGITALOCEAN_TOKEN
+  token = var.DIGITALOCEAN_TOKEN
 }
 
 provider "kubernetes" {
