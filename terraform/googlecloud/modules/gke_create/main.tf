@@ -32,60 +32,81 @@ module "vpc" {
     version                 = ">= 5.0.0"
     project_id              = local.project_id	
     network_name            = local.network_name
-    auto_create_subnetworks	= false
-    delete_default_internet_gateway_routes = true
-    shared_vpc_host         = false
+    auto_create_subnetworks	= var.auto_create_subnetworks
+    delete_default_internet_gateway_routes = var.delete_default_internet_gateway_routes
+    shared_vpc_host         = var.shared_vpc_host
     routing_mode            = "GLOBAL"
 
     subnets = [
         {
-            subnet_name           = var.gke-subnet
-            subnet_ip             = "10.10.10.0/24"
-            subnet_region         = var.region
-        },
-        {
-            subnet_name           = var.gke_subnet_pods
-            subnet_ip             = "10.10.20.0/24"
-            subnet_region         = var.region
-            subnet_private_access = "true"
-            subnet_flow_logs      = "true"
-            description           = "This subnet has a description"
-        },
-        {
-            subnet_name               = var.gke_subnet_services
-            subnet_ip                 = "10.10.30.0/24"
-            subnet_region             = var.region
+            subnet_name               = "${local.network_name}-subnet"
+            subnet_ip                 = "${var.ip_range_nodes}"
+            subnet_region             = "${var.region}"
+            subnet_private_access     = "true"
             subnet_flow_logs          = "true"
             subnet_flow_logs_interval = "INTERVAL_10_MIN"
             subnet_flow_logs_sampling = 0.7
             subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
+            description               = "this subnet for GKE Cluster masters/nodes"
+        },
+        {
+            subnet_name               = "${local.network_name}-subnet_pods"
+            subnet_ip                 = "${var.ip_range_pods}" 
+            subnet_region             = var.region
+            subnet_private_access     = "true"
+            subnet_flow_logs          = "true"
+            subnet_flow_logs_interval = "INTERVAL_10_MIN"
+            subnet_flow_logs_sampling = 0.7
+            subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
+            description               = "this subnet for GKE Cluster pods/containers"
+        },
+        {
+            subnet_name               = "${local.network_name}-subnet_services"
+            subnet_ip                 = "${var.ip_range_services}"
+            subnet_region             = var.region
+            subnet_private_access     = "true"
+            subnet_flow_logs          = "true"
+            subnet_flow_logs_interval = "INTERVAL_10_MIN"
+            subnet_flow_logs_sampling = 0.7
+            subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
+            description               = "this subnet for GKE services in $cluster"
         }
     ]
 
     secondary_ranges = {
-        subnet-01 = [
+        "${local.network_name}-subnet" = [
             {
-                range_name    = "subnet-01-secondary-01"
-                ip_cidr_range = "192.168.64.0/24"
+                range_name    = "${local.network_name}-subnet-secondary-01"
+                ip_cidr_range = var.ip_range_nodes_sec
             },
         ]
-
-        subnet-02 = []
+        "${local.network_name}-subnet_pods" = [
+            {
+                range_name    = "${local.network_name}-subnet_pods-secondary-01"
+                ip_cidr_range = var.ip_range_pods_sec 
+            },
+        ]
+         "${local.network_name}-subnet_services" = [
+            {
+                range_name    = "${local.network_name}-subnet_services-secondary-01"
+                ip_cidr_range = var.ip_range_services_sec 
+            },
+        ]
     }
 
     routes = [
         {
-            name                   = "egress-internet"
-            description            = "route through IGW to access internet"
+            name                   = "egress-internet-${local.network_name}"
+            description            = "route through  IGW to access internet"
             destination_range      = "0.0.0.0/0"
-            tags                   = "egress-inet"
+            tags                   = "egress-gke"
             next_hop_internet      = "true"
         },
         {
-            name                   = "app-proxy"
+            name                   = "ingress-internet-to-${local.network_name}"
             description            = "route through proxy to reach app"
             destination_range      = "10.50.10.0/24"
-            tags                   = "app-proxy"
+            tags                   = "ingress-gke"
             next_hop_instance      = "app-proxy-instance"
             next_hop_instance_zone = "us-west1-a"
         },
@@ -96,78 +117,40 @@ module "gke" {
   source                      = "terraform-google-modules/kubernetes-engine/google"
   project_id                  = project-factory.project_id
   name                        = "${var.project_name}-${var.environment}-${var.cluster_name}"
-  region                      = var.cluster_region
+  region                      = var.region
   zones                       = [var.cluster_zones]
   network                     = vpc.network_name
-  subnetwork                  = var.gke-subnet
-  ip_range_pods               = var.gke_subnet_pods
-  ip_range_services           = var.gke_subnet_services
-  http_load_balancing         = true
-  remove_default_node_pool    = true
-  network_policy              = false
-  horizontal_pod_autoscaling  = true
-  filestore_csi_driver        = false
-  impersonate_service_account = var.service_account
-  node_pools = [
-    {
-      name                      = "default-node-pool"
-      machine_type              = "e2-medium"
-      node_locations            = "us-central1-b,us-central1-c"
-      min_count                 = 1
-      max_count                 = 100
-      local_ssd_count           = 0
-      disk_size_gb              = 100
-      disk_type                 = "pd-standard"
-      image_type                = "COS_CONTAINERD"
-      auto_repair               = true
-      auto_upgrade              = true
-      service_account           = "project-service-account@<PROJECT ID>.iam.gserviceaccount.com"
-      preemptible               = false
-      initial_node_count        = 80
-    },
-  ]
-
-  node_pools_oauth_scopes = {
-    all = []
-
-    default-node-pool = [
-      "https://www.googleapis.com/auth/cloud-platform",
-    ]
+  subnetwork                  = "${local.network_name}-subnet"
+  ip_range_pods               = "${local.network_name}-subnet_pods"
+  ip_range_services           = "${local.network_name}-subnet_services"
+  http_load_balancing         = var.http_load_balancing
+  remove_default_node_pool    = var.remove_default_node_pool
+  network_policy              = var.network_policy
+  horizontal_pod_autoscaling  = var.horizontal_pod_autoscaling
+  filestore_csi_driver        = var.filestore_csi_driver
+  impersonate_service_account = var.impersonate_service_account
+}
+module "gke_node_pools" {
+  source                    = "../gke_create_node_pool"
+  name                      = "${var.project_name}-${var.environment}-${var.cluster_name}-node-pool"
+  cluster                   = gke.name
+  machine_type              = var.worker_size
+  location                  = var.region ? null : [var.cluster_zones]
+  min_count                 = var.min_nodes
+  max_count                 = var.max_count
+  local_ssd_count           = var.nodelocal_ssd_count
+  disk_size_gb              = var.disk_size_gb
+  disk_type                 = var.disk_type
+  image_type                = var.node_image_type
+  auto_repair               = var.auto_repair
+  auto_upgrade              = var.auto_upgrade
+  service_account           = var.service_account
+  preemptible               = var.preemptible
+  initial_node_count        = var.initial_node_count
+  oauth_scopes              = var.gke_node_pool_oauth_scopes
+  tags                      = var.gke_node_pool_tags
+  labels = {
+    all-pools     = "true"
   }
-
-  node_pools_labels = {
-    all = {}
-
-    default-node-pool = {
-      default-node-pool = true
-    }
-  }
-
-  node_pools_metadata = {
-    all = {}
-
-    default-node-pool = {
-      node-pool-metadata-custom-value = "my-node-pool"
-    }
-  }
-
-  node_pools_taints = {
-    all = []
-
-    default-node-pool = [
-      {
-        key    = "default-node-pool"
-        value  = true
-        effect = "PREFER_NO_SCHEDULE"
-      },
-    ]
-  }
-
-  node_pools_tags = {
-    all = []
-
-    default-node-pool = [
-      "default-node-pool",
-    ]
-  }
+  depends_on = [module.gke]
 }

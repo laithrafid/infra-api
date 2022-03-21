@@ -1,45 +1,40 @@
-# 1.What the project does ?
-# 2.Why the project is useful ?
-# 3. How users can get started with the project ?
-# 4. Where users can get help with your project ?
-# 5. Who maintains and contributes to the project , How to contribute?
-# contributions 
-if you want to contribute to a project, the simplest way is to:
-1. Find a repo fork button
-3. Clone it to your local system
-4. Make a new branch
-5. Make your changes
-6. Push it back to your repo
-7. Click the Compare & pull request button
-8. Click Create pull request to open a new pull request
+## Requirements
 
+| Name | Version |
+|------|---------|
+| <a name="requirement_google"></a> [google](#requirement\_google) | >= 4.14.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.4.1 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.8.0 |
 
+## Providers
 
+| Name | Version |
+|------|---------|
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
+## Modules
 
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_gke_create"></a> [gke\_create](#module\_gke\_create) | ./modules/gke_manage | n/a |
+| <a name="module_gke_manage"></a> [gke\_manage](#module\_gke\_manage) | ./modules/gke_manage | n/a |
 
-Google project factory require permissions to be given to Service Account
+## Resources
 
-roles/resourcemanager.folderViewer on the folder that you want to create the project in
-roles/resourcemanager.organizationViewer on the organization
-roles/resourcemanager.projectCreator on the organization
-roles/billing.user on the organization
-roles/storage.admin on bucket_project
+| Name | Type |
+|------|------|
+| [random_id.cluster_name](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
-In order to execute this module you must have a Service Account with the following roles:
+## Inputs
 
-roles/compute.networkAdmin on the organization or folder
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_GOOGLECLOUD_TOKEN"></a> [GOOGLECLOUD\_TOKEN](#input\_GOOGLECLOUD\_TOKEN) | n/a | `any` | n/a | yes |
+| <a name="input_billing_account"></a> [billing\_account](#input\_billing\_account) | n/a | `any` | n/a | yes |
+| <a name="input_org_id"></a> [org\_id](#input\_org\_id) | n/a | `any` | n/a | yes |
+| <a name="input_project_name"></a> [project\_name](#input\_project\_name) | n/a | `any` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | n/a | `any` | n/a | yes |
 
-Configure a Service Account
-In order to execute this module you must have a Service Account with the following project roles:
+## Outputs
 
-roles/compute.viewer
-roles/compute.securityAdmin (only required if add_cluster_firewall_rules is set to true)
-roles/container.clusterAdmin
-roles/container.developer
-roles/iam.serviceAccountAdmin
-roles/iam.serviceAccountUser
-roles/resourcemanager.projectIamAdmin (only required if service_account is set to create)
-Additionally, if service_account is set to create and grant_registry_access is requested, the service account requires the following role on the registry_project_ids projects:
-
-roles/resourcemanager.projectIamAdmin
+No outputs.
