@@ -9,7 +9,7 @@ variable "billing_account" {
     variable = string
     sensitive = true
 }
-variable "org_id" {
+variable "organization_id" {
     variable = string
     sensitive = true
 }
