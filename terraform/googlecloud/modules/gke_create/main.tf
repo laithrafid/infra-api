@@ -10,7 +10,7 @@ locals {
 
 
 resource "google_folder" "folder" {
-  display_name = var.folder_name
+  display_name = var.project_folder
   parent       = "organizations/${var.organization_id}"
 }
 
@@ -18,7 +18,7 @@ module "project-factory" {
   source            = "terraform-google-modules/project-factory/google"
   version           = ">= 12.0.0"
   name              = var.project_name
-  project_id	      = local.project_id	
+  project_id	    = local.project_id	
   org_id            = var.organization_id
   billing_account   = var.billing_account
   folder_id         = google_folder.folder.id
@@ -52,7 +52,7 @@ module "vpc" {
         {
             subnet_name               = "${local.network_name}-subnet_pods"
             subnet_ip                 = "${var.ip_range_pods}" 
-            subnet_region             = var.region
+            subnet_region             = "${var.region}"
             subnet_private_access     = "true"
             subnet_flow_logs          = "true"
             subnet_flow_logs_interval = "INTERVAL_10_MIN"
@@ -63,7 +63,7 @@ module "vpc" {
         {
             subnet_name               = "${local.network_name}-subnet_services"
             subnet_ip                 = "${var.ip_range_services}"
-            subnet_region             = var.region
+            subnet_region             = "${var.region}"
             subnet_private_access     = "true"
             subnet_flow_logs          = "true"
             subnet_flow_logs_interval = "INTERVAL_10_MIN"
@@ -105,10 +105,10 @@ module "vpc" {
         {
             name                   = "ingress-internet-to-${local.network_name}"
             description            = "route through proxy to reach app"
-            destination_range      = "10.50.10.0/24"
+            destination_range      = "Loadbalancer/23"
             tags                   = "ingress-gke"
             next_hop_instance      = "app-proxy-instance"
-            next_hop_instance_zone = "us-west1-a"
+            next_hop_instance_zone = var.cluster_zones
         },
     ]
 }
@@ -128,7 +128,7 @@ module "gke" {
   network_policy              = var.network_policy
   horizontal_pod_autoscaling  = var.horizontal_pod_autoscaling
   filestore_csi_driver        = var.filestore_csi_driver
-  impersonate_service_account = var.impersonate_service_account
+  impersonate_service_account = var.service_account
 }
 module "gke_node_pools" {
   source                    = "../gke_create_node_pool"
@@ -137,18 +137,18 @@ module "gke_node_pools" {
   machine_type              = var.worker_size
   location                  = var.region ? null : [var.cluster_zones]
   min_count                 = var.min_nodes
-  max_count                 = var.max_count
-  local_ssd_count           = var.nodelocal_ssd_count
+  max_count                 = var.max_nodes
   disk_size_gb              = var.disk_size_gb
   disk_type                 = var.disk_type
+  local_ssd_count           = var.nodelocal_ssd_count
   image_type                = var.node_image_type
   auto_repair               = var.auto_repair
   auto_upgrade              = var.auto_upgrade
   service_account           = var.service_account
   preemptible               = var.preemptible
-  initial_node_count        = var.initial_node_count
-  oauth_scopes              = var.gke_node_pool_oauth_scopes
-  tags                      = var.gke_node_pool_tags
+  initial_node_count        = var.min_nodes
+  oauth_scopes              = [var.gke_node_pool_oauth_scopes]
+  tags                      = [var.gke_node_pool_tags]
   labels = {
     all-pools     = "true"
   }
