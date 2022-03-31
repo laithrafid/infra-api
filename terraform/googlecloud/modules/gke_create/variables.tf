@@ -85,7 +85,7 @@ variable "worker_size" {
 variable "use_private_endpoint" {
   type = bool 
   default = "false"
-  desdescription = "private cluster endpoint" 
+  description = "private cluster endpoint" 
 }
 variable "auto_scale" {
   type        = bool

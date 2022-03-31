@@ -1,3 +1,8 @@
+
+## How to run :
+* copy terraform.tfvars.template to terraform.tfvars and fill with variables
+`cp terraform.tfvars.template terraform.tfvars`
+* `terraform init`
 ## Requirements
 
 | Name | Version |

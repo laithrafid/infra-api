@@ -1,5 +1,5 @@
 variable "GOOGLECLOUD_TOKEN" {
-  variable = string
+  type = string
   sensitive = true
 }
 variable "environment" {
@@ -7,7 +7,7 @@ variable "environment" {
   default = "dev"
 }
 variable "billing_account" {
-    variable = string
+    type = string
     sensitive = true
 }
 variable "project_folder" {
@@ -85,7 +85,7 @@ variable "worker_size" {
 variable "use_private_endpoint" {
   type = bool 
   default = "false"
-  desdescription = "private cluster endpoint" 
+  description = "private cluster endpoint" 
 }
 variable "auto_scale" {
   type        = bool

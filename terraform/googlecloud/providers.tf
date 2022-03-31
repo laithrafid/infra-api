@@ -1,4 +1,5 @@
 terraform {
+  required_version = ">= 0.13.0"
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -7,6 +8,10 @@ terraform {
     google-beta = {
       source  = "hashicorp/google-beta"
       version = ">= 4.14.0"
+    }
+    gsuite = {
+      source = "hashicorp/googleworkspace"
+      version = ">= 0.6.0"
     }
    kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -64,4 +69,12 @@ provider "helm" {
   cluster_ca_certificate = module.gke_manage.cluster_ca_certificate
   host                   = module.gke_manage.host
   token                  = module.gke_manage.token
+}
+
+
+provider "gsuite" {
+  oauth_scopes = [
+    "https://www.googleapis.com/auth/admin.directory.group",
+    "https://www.googleapis.com/auth/admin.directory.group.member",
+  ]
 }
