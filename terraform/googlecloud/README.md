@@ -8,14 +8,60 @@
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.8.0 |
 
 ## Providers
+```
+  provider "google" {
+  project      = var.project
+  region       = var.region
+  access_token = var.GOOGLECLOUD_TOKEN
+  scopes = [
+    # Default scopes
+    "https://www.googleapis.com/auth/compute",
+    "https://www.googleapis.com/auth/cloud-platform",
+    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
+    "https://www.googleapis.com/auth/devstorage.full_control",
 
-No providers.
+    # Required for google_client_openid_userinfo
+    "https://www.googleapis.com/auth/userinfo.email",
+  ]
+}
 
+provider "google-beta" {
+  project      = var.project
+  region       = var.region
+  access_token = var.GOOGLECLOUD_TOKEN
+  scopes = [
+    # Default scopes
+    "https://www.googleapis.com/auth/compute",
+    "https://www.googleapis.com/auth/cloud-platform",
+    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
+    "https://www.googleapis.com/auth/devstorage.full_control",
+
+    # Required for google_client_openid_userinfo
+    "https://www.googleapis.com/auth/userinfo.email",
+  ]
+}
+
+
+provider "kubernetes" {
+  load_config_file       = false
+  cluster_ca_certificate = module.gke_manage.cluster_ca_certificate
+  host                   = module.gke_manage.host
+  token                  = module.gke_manage.token
+}
+
+provider "helm" {
+  load_config_file       = false
+  cluster_ca_certificate = module.gke_manage.cluster_ca_certificate
+  host                   = module.gke_manage.host
+  token                  = module.gke_manage.token
+}
+```
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_gke_create"></a> [gke\_create](#module\_gke\_create) | ./modules/gke_create | n/a |
+| <a name="module_gke_create_node_pool"></a> [gke\_create\node_poole](#module\_gke\_create\_node_pool) | ./modules/gke_create_node_pool | n/a |
 | <a name="module_gke_manage"></a> [gke\_manage](#module\_gke\_manage) | ./modules/gke_manage | n/a |
 
 ## Resources
