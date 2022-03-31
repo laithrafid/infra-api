@@ -22,20 +22,42 @@ module "project-factory" {
   org_id            = var.organization_id
   billing_account   = var.billing_account
   folder_id         = google_folder.folder.id
-  activate_apis     = [ "compute.googleapis.com",
-                        "container.googleapis.com" ]
-  consumer_quotas	  = [""]
+  activate_apis     = [var.activate_apis]
+  consumer_quotas   = [var.consumer_quotas]
 }
 
+
+module "service_accounts" {
+  source        = "terraform-google-modules/service-accounts/google"
+  version       = ">= 4.0.0"
+  project_id    = module.project-factory.project_id
+  prefix        = "dev-sa"
+  generate_keys = true
+  names         = ["gke-${prefix}"]
+  project_roles = [
+    "${module.project-factory.project_name}=>roles/container.admin",
+    "${module.project-factory.project_name}=>roles/container.clusterAdmin",
+    "${module.project-factory.project_name}=>roles/container.clusterViewer",
+    "${module.project-factory.project_name}=>roles/container.developer",
+    "${module.project-factory.project_name}=>roles/container.hostServiceAgentUser",
+    "${module.project-factory.project_name}=>roles/container.viewer"
+  ]
+  depends_on = [
+    module.project-factory
+  ]
+}
 module "vpc" {
     source                  = "terraform-google-modules/network/google"
     version                 = ">= 5.0.0"
-    project_id              = local.project_id	
+    project_id              = module.project-factory.project_id	
     network_name            = local.network_name
     auto_create_subnetworks	= var.auto_create_subnetworks
     delete_default_internet_gateway_routes = var.delete_default_internet_gateway_routes
     shared_vpc_host         = var.shared_vpc_host
     routing_mode            = "GLOBAL"
+    depends_on = [
+      module.project-factory
+    ]
 
     subnets = [
         {
@@ -128,7 +150,12 @@ module "gke" {
   network_policy              = var.network_policy
   horizontal_pod_autoscaling  = var.horizontal_pod_autoscaling
   filestore_csi_driver        = var.filestore_csi_driver
-  impersonate_service_account = var.service_account
+  impersonate_service_account = module.service_accounts.service_account.email
+  depends_on = [
+    module.project-factory,
+    module.vpc,
+    module.service_accounts
+  ]
 }
 module "gke_node_pools" {
   source                    = "../gke_create_node_pool"
@@ -144,7 +171,7 @@ module "gke_node_pools" {
   image_type                = var.node_image_type
   auto_repair               = var.auto_repair
   auto_upgrade              = var.auto_upgrade
-  service_account           = var.service_account
+  service_account           = module.service_accounts.service_account.email
   preemptible               = var.preemptible
   initial_node_count        = var.min_nodes
   oauth_scopes              = [var.gke_node_pool_oauth_scopes]
@@ -152,5 +179,8 @@ module "gke_node_pools" {
   labels = {
     all-pools     = "true"
   }
-  depends_on = [module.gke]
+  depends_on = [
+      module.gke,
+      module.service_accounts
+  ]
 }

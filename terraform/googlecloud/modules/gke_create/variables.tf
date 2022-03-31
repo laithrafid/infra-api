@@ -24,6 +24,15 @@ variable "organization_id" {
     type = string
     sensitive = true
 }
+variable "activate_apis" {
+  type = list
+  default = ["compute.googleapis.com",
+            "container.googleapis.com"]
+}
+variable "consumer_quotas" {
+  type = list
+  nullable = true
+}
 variable "cluster_zones" {
     type = list  
     default = [
@@ -102,10 +111,6 @@ variable "node_image_type" {
 # cos: Container-Optimized OS with Docker
 # ubuntu_containerd: Ubuntu with containerd
 # ubuntu: Ubuntu with Docker.
-variable "service_account" {
-  type = string
-  description = "he Google Cloud Platform Service Account to be used/impersonate by the node VMs."
-}
 variable "auto_repair" {
   type = string
   nullable = true 

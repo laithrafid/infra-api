@@ -1,3 +1,4 @@
+
 module "gke_create" {
     source = "./modules/gke_create"
     GOOGLECLOUD_TOKEN = var.GOOGLECLOUD_TOKEN
@@ -22,7 +23,6 @@ module "gke_create" {
     min_nodes         = var.min_nodes
     max_nodes         = var.max_nodes
     node_image_type   = var.node_image_type
-    service_account   = var.service_account
     auto_repair       = var.auto_repair
     auto_upgrade      = var.auto_upgrade
     preemptible       = var.preemptible
