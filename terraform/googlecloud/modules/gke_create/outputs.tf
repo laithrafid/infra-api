@@ -87,7 +87,7 @@ output "iam_emails" {
 output "keys" {
   description = "The service account email."
   value       = module.service_accounts.keys
-  sensitive = true
+  sensitive   = true
 }
 output "cluster_location" {
   value = module.gke.location
@@ -100,6 +100,6 @@ output "kubernetes_endpoint" {
   value     = module.gke.endpoint
 }
 output "ca_certificate" {
-  value = module.gke.ca_certificate
+  value     = module.gke.ca_certificate
   sensitive = true
 }
