@@ -18,12 +18,16 @@ module "project_factory" {
   source            = "terraform-google-modules/project-factory/google"
   version           = ">= 12.0.0"
   name              = var.project_name
-  project_id	    = local.project_id	
+  project_id	      = local.project_id	
   org_id            = var.organization_id
   billing_account   = var.billing_account
   folder_id         = google_folder.folder.id
-  activate_apis     = [var.activate_apis]
-  consumer_quotas   = [var.consumer_quotas]
+  activate_apis     = var.activate_apis
+  consumer_quotas   = var.consumer_quotas
+  lien              = var.lien
+  depends_on = [
+    google_folder.folder
+  ]
 }
 
 
@@ -31,9 +35,9 @@ module "service_accounts" {
   source        = "terraform-google-modules/service-accounts/google"
   version       = ">= 4.0.0"
   project_id    = module.project_factory.project_id
-  prefix        = "dev-sa"
+  prefix        = "gkesa"
   generate_keys = true
-  names         = ["gke-${prefix}"]
+  names         = ["gkeproject"]
   project_roles = [
     "${module.project_factory.project_name}=>roles/container.admin",
     "${module.project_factory.project_name}=>roles/container.clusterAdmin",
@@ -124,24 +128,17 @@ module "vpc" {
             tags                   = "egress-gke"
             next_hop_internet      = "true"
         },
-        {
-            name                   = "ingress-internet-to-${local.network_name}"
-            description            = "route through proxy to reach app"
-            destination_range      = "Loadbalancer/23"
-            tags                   = "ingress-gke"
-            next_hop_instance      = "app-proxy-instance"
-            next_hop_instance_zone = var.cluster_zones
-        },
     ]
 }
 
 module "gke" {
   source                      = "terraform-google-modules/kubernetes-engine/google"
+  version                     = "20.0.0"
   project_id                  = module.project_factory.project_id
   name                        = "${var.project_name}-${var.environment}-${var.cluster_name}"
   region                      = var.region
-  zones                       = [var.cluster_zones]
-  network                     = vpc.network_name
+  zones                       = var.cluster_zones
+  network                     = module.vpc.network_name
   subnetwork                  = "${local.network_name}-subnet"
   ip_range_pods               = "${local.network_name}-subnet_pods"
   ip_range_services           = "${local.network_name}-subnet_services"
@@ -160,23 +157,23 @@ module "gke" {
 module "gke_node_pools" {
   source                    = "../gke_create_node_pool"
   name                      = "${var.project_name}-${var.environment}-${var.cluster_name}-node-pool"
-  cluster                   = gke.name
+  cluster                   = module.gke.name
   project_id                = module.project_factory.project_id
   machine_type              = var.worker_size
-  location                  = var.region ? null : [var.cluster_zones]
+  location                  = var.region
   min_node_count            = var.min_nodes
   max_node_count            = var.max_nodes
   disk_size_gb              = var.disk_size_gb
   disk_type                 = var.disk_type
-  local_ssd_count           = var.nodelocal_ssd_count
   image_type                = var.node_image_type
   auto_repair               = var.auto_repair
   auto_upgrade              = var.auto_upgrade
   service_account           = module.service_accounts.service_account.email
-  preemptible               = var.preemptible
   initial_node_count        = var.min_nodes
-  oauth_scopes              = [var.gke_node_pool_oauth_scopes]
-  tags                      = [var.gke_node_pool_tags]
+  oauth_scopes              = var.gke_node_pool_oauth_scopes
+  tags                      = var.gke_node_pool_tags
+  workload_metadata_config  = var.workload_metadata_config
+
   labels = {
     all-pools     = "true"
   }

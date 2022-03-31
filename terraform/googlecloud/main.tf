@@ -25,7 +25,7 @@ module "gke_create" {
   node_image_type                        = var.node_image_type
   auto_repair                            = var.auto_repair
   auto_upgrade                           = var.auto_upgrade
-  preemptible                            = var.preemptible
+  consumer_quotas                        = [var.consumer_quotas]
   gke_node_pool_oauth_scopes             = [var.gke_node_pool_oauth_scopes]
   gke_node_pool_tags                     = [var.gke_node_pool_tags]
 }

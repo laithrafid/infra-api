@@ -60,7 +60,7 @@ resource "google_container_node_pool" "node_pool" {
       for_each = var.workload_metadata_config != null ? [var.workload_metadata_config] : []
 
       content {
-        node_metadata = var.workload_metadata_config
+        mode = var.workload_metadata_config
       }
     }
 

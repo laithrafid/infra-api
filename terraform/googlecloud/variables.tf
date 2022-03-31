@@ -21,13 +21,24 @@ variable "organization_id" {
   sensitive = true
 }
 variable "activate_apis" {
-  type = list(any)
+  type = list(string)
   default = ["compute.googleapis.com",
-  "container.googleapis.com"]
+            "container.googleapis.com"]
+}
+variable "lien" {
+  description = "Add a lien on the project to prevent accidental deletion"
+  type        = bool
+  default     = false
 }
 variable "consumer_quotas" {
-  type     = list(any)
-  nullable = true
+  description = "The quotas configuration you want to override for the project."
+  type = list(object({
+    service = string,
+    metric  = string,
+    limit   = string,
+    value   = string,
+  }))
+  default = []
 }
 variable "region" {
   type    = string
@@ -127,7 +138,7 @@ variable "auto_upgrade" {
 # In some cases, a preemptible VM might last longer than 24 hours. This can occur when the new Compute Engine instance comes
 # up too fast and Kubernetes doesn't recognize that a different Compute Engine VM was created. The underlying Compute Engine
 # instance will have a maximum duration of 24 hours and follow the expected preemptible VM behavior.
-variable "preemptible" {
+variable "is_preemptible" {
   type        = bool
   nullable    = true
   description = "(Optional) A boolean that represents whether or not the underlying node VMs are preemptible. See the official documentation for more information. Defaults to false."

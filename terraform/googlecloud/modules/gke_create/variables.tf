@@ -25,16 +25,32 @@ variable "organization_id" {
     sensitive = true
 }
 variable "activate_apis" {
-  type = list
+  type = list(string)
   default = ["compute.googleapis.com",
             "container.googleapis.com"]
 }
+variable "lien" {
+  description = "Add a lien on the project to prevent accidental deletion"
+  type        = bool
+  default     = false
+}
 variable "consumer_quotas" {
-  type = list
-  nullable = true
+  description = "The quotas configuration you want to override for the project."
+  type = list(object({
+    service = string,
+    metric  = string,
+    limit   = string,
+    value   = string,
+  }))
+  default = []
+}
+variable "region" {
+  type    = string
+  description = "The zones to host the cluster in (optional if regional cluster / required if zonal)"
+  default = "northamerica-northeast1"
 }
 variable "cluster_zones" {
-    type = list  
+    type = list(string)
     default = [
         "northamerica-northeast1-a",
         "northamerica-northeast1-b",
@@ -102,6 +118,17 @@ variable "max_nodes" {
   default = 4
 }
 
+variable "disk_size_gb" {
+  default     = 30
+  description = "(Optional) Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB"
+}
+
+variable "disk_type" {
+  default     = "pd-standard"
+  description = "(Optional) Type of the disk attached to each node (e.g. 'pd-standard', 'pd-balanced' or 'pd-ssd')."
+}
+
+
 variable "node_image_type" {
   type = string
   nullable = true 
@@ -127,19 +154,57 @@ variable "auto_upgrade" {
 # In some cases, a preemptible VM might last longer than 24 hours. This can occur when the new Compute Engine instance comes
 # up too fast and Kubernetes doesn't recognize that a different Compute Engine VM was created. The underlying Compute Engine
 # instance will have a maximum duration of 24 hours and follow the expected preemptible VM behavior.
-variable "preemptible" {
+variable "is_preemptible" {
   type = bool
   nullable = true 
   description = "(Optional) A boolean that represents whether or not the underlying node VMs are preemptible. See the official documentation for more information. Defaults to false."
   default = false
 }
+variable "http_load_balancing" {
+  type = bool
+  default = true
+  description = "Enable httpload balancer addon"
+}
+variable "horizontal_pod_autoscaling" {
+  type = bool
+  default = false
+  description = "Enable horizontal pod autoscaling addon"
+}
+variable "network_policy" {
+  type = bool
+  default = false
+  description = "Enable network policy addon"
+}
+variable "remove_default_node_pool" {
+  type = bool
+  default = false
+  description = "Remove default node pool while setting up the cluster" 
+}
 variable "gke_node_pool_oauth_scopes" {
-  type = list 
   nullable = true 
-  description = "(Optional) Scopes that are used by NAP when creating node pools. Use the https://www.googleapis.com/auth/cloud-platform scope to grant access to all APIs. It is recommended that you set"
+  description = "(Optional) Scopes that are used by NAP when creating node pools."
+  default     = []
+  type        = list(string)
 }
 variable "gke_node_pool_tags" {
-  type = list
+  type = list(string)
+  description = "The list of instance tags applied to all nodes. Tags are used to identify valid sources or targets for network firewalls."
+  default     = []
   nullable = true 
-  description = "(Optional) The list of instance tags applied to all nodes. Tags are used to identify valid sources or targets for network firewalls."
+}
+variable "filestore_csi_driver" {
+  type        = bool
+  description = "The status of the Filestore CSI driver addon, which allows the usage of filestore instance as volumes"
+  default     = false
+}
+variable "workload_metadata_config" {
+  description = "Metadata configuration to expose to workloads on the node pool."
+  default = [
+    {
+      mode = "UNSPECIFIED"
+    }
+  ]
+  type = list(object({
+    mode = string
+  }))
 }

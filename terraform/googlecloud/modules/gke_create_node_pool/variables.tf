@@ -118,10 +118,17 @@ variable "oauth_scopes" {
   type        = list(string)
 }
 
+# you can read more about modes here https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#:~:text=workload_metadata_config%20block%20supports%3A-,mode,-(Required)%20How%20to
 variable "workload_metadata_config" {
   description = "Metadata configuration to expose to workloads on the node pool."
-  default     = null
-  type        = string
+  default = [
+    {
+      mode = "UNSPECIFIED"
+    }
+  ]
+  type = list(object({
+    mode = string
+  }))
 }
 
 variable "enable_secure_boot" {
@@ -178,6 +185,7 @@ variable "metadata" {
 }
 
 variable "tags" {
+  type = list(string)
   description = "(Optional) The list of instance tags applied to all nodes. Tags are used to identify valid sources or targets for network firewalls."
   default     = []
 }
