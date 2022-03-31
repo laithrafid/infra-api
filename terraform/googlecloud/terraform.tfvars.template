@@ -1,8 +1,8 @@
 GOOGLECLOUD_TOKEN = ""
-billing_account = "01F6E0-CAEE0D-ECCF35"
-project_folder = "terraform"
+billing_account = ""
+project_folder = ""
 project_name = ""
-organization_id = "27775405036"
+organization_id = ""
 region = "northamerica-northeast1"
 cluster_zones = [
         "northamerica-northeast1-a",
