@@ -10,10 +10,10 @@ terraform {
       version = ">= 4.14.0"
     }
     googleworkspace = {
-      source = "hashicorp/googleworkspace"
+      source  = "hashicorp/googleworkspace"
       version = "0.6.0"
     }
-   kubernetes = {
+    kubernetes = {
       source  = "hashicorp/kubernetes"
       version = ">= 2.8.0"
     }
@@ -71,7 +71,7 @@ provider "helm" {
 }
 
 
-provider "googleworkspace"{
+provider "googleworkspace" {
   oauth_scopes = [
     "https://www.googleapis.com/auth/admin.directory.group",
     "https://www.googleapis.com/auth/admin.directory.group.member",
