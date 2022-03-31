@@ -14,7 +14,7 @@ resource "google_folder" "folder" {
   parent       = "organizations/${var.organization_id}"
 }
 
-module "project-factory" {
+module "project_factory" {
   source            = "terraform-google-modules/project-factory/google"
   version           = ">= 12.0.0"
   name              = var.project_name
@@ -30,33 +30,33 @@ module "project-factory" {
 module "service_accounts" {
   source        = "terraform-google-modules/service-accounts/google"
   version       = ">= 4.0.0"
-  project_id    = module.project-factory.project_id
+  project_id    = module.project_factory.project_id
   prefix        = "dev-sa"
   generate_keys = true
   names         = ["gke-${prefix}"]
   project_roles = [
-    "${module.project-factory.project_name}=>roles/container.admin",
-    "${module.project-factory.project_name}=>roles/container.clusterAdmin",
-    "${module.project-factory.project_name}=>roles/container.clusterViewer",
-    "${module.project-factory.project_name}=>roles/container.developer",
-    "${module.project-factory.project_name}=>roles/container.hostServiceAgentUser",
-    "${module.project-factory.project_name}=>roles/container.viewer"
+    "${module.project_factory.project_name}=>roles/container.admin",
+    "${module.project_factory.project_name}=>roles/container.clusterAdmin",
+    "${module.project_factory.project_name}=>roles/container.clusterViewer",
+    "${module.project_factory.project_name}=>roles/container.developer",
+    "${module.project_factory.project_name}=>roles/container.hostServiceAgentUser",
+    "${module.project_factory.project_name}=>roles/container.viewer"
   ]
   depends_on = [
-    module.project-factory
+    module.project_factory
   ]
 }
 module "vpc" {
     source                  = "terraform-google-modules/network/google"
     version                 = ">= 5.0.0"
-    project_id              = module.project-factory.project_id	
+    project_id              = module.project_factory.project_id	
     network_name            = local.network_name
     auto_create_subnetworks	= var.auto_create_subnetworks
     delete_default_internet_gateway_routes = var.delete_default_internet_gateway_routes
     shared_vpc_host         = var.shared_vpc_host
     routing_mode            = "GLOBAL"
     depends_on = [
-      module.project-factory
+      module.project_factory
     ]
 
     subnets = [
@@ -137,7 +137,7 @@ module "vpc" {
 
 module "gke" {
   source                      = "terraform-google-modules/kubernetes-engine/google"
-  project_id                  = project-factory.project_id
+  project_id                  = module.project_factory.project_id
   name                        = "${var.project_name}-${var.environment}-${var.cluster_name}"
   region                      = var.region
   zones                       = [var.cluster_zones]
@@ -152,7 +152,7 @@ module "gke" {
   filestore_csi_driver        = var.filestore_csi_driver
   impersonate_service_account = module.service_accounts.service_account.email
   depends_on = [
-    module.project-factory,
+    module.project_factory,
     module.vpc,
     module.service_accounts
   ]
@@ -161,10 +161,11 @@ module "gke_node_pools" {
   source                    = "../gke_create_node_pool"
   name                      = "${var.project_name}-${var.environment}-${var.cluster_name}-node-pool"
   cluster                   = gke.name
+  project_id                = module.project_factory.project_id
   machine_type              = var.worker_size
   location                  = var.region ? null : [var.cluster_zones]
-  min_count                 = var.min_nodes
-  max_count                 = var.max_nodes
+  min_node_count            = var.min_nodes
+  max_node_count            = var.max_nodes
   disk_size_gb              = var.disk_size_gb
   disk_type                 = var.disk_type
   local_ssd_count           = var.nodelocal_ssd_count
@@ -181,6 +182,7 @@ module "gke_node_pools" {
   }
   depends_on = [
       module.gke,
-      module.service_accounts
+      module.service_accounts,
+      module.project_factory
   ]
 }
