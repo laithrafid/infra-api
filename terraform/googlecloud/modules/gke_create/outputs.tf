@@ -70,18 +70,24 @@ output "subnets_secondary_ranges" {
   description = "The secondary ranges associated with these subnets"
 }
 
-output "email" {
-  description = "The service account email."
-  value       = module.service_accounts.service_account.email
+output "emails" {
+  description = "The service account emails."
+  value       = module.service_accounts.emails
 }
-output "key" {
+
+output "emails_list" {
+  description = "The service account emails as a list."
+  value       = module.service_accounts.emails_list
+}
+
+output "iam_emails" {
+  description = "The service account IAM-format emails as a map."
+  value       = module.service_accounts.iam_emails
+}
+output "keys" {
   description = "The service account email."
-  value       = module.service_accounts.service_account.key
+  value       = module.service_accounts.keys
   sensitive = true
-}
-output "iam_email" {
-  description = "The service account IAM-format email."
-  value       = module.service_accounts.iam_email
 }
 output "cluster_location" {
   value = module.gke.location

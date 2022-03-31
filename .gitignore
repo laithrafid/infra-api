@@ -27,3 +27,4 @@ terraform/googlecloud/terraform.tfvars
 terraform/googlecloud/terraform.tfvars
 terraform/googlecloud/terraform.tfvars
 terraform/googlecloud/modules/gke_create/terraform.tfvars
+terraform/googlecloud/modules/gke_create/terraform.tfstate.backup

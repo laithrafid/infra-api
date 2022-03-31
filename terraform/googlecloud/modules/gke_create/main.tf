@@ -1,10 +1,7 @@
-resource "random_id" "project_id" {
-  byte_length = 5
-}
 
 locals {
-  project_id   = "${random_id.project_id.hex}"
-  cluster_name = "gke-${random_id.project_id.hex}"
+  project_id   = var.project_name
+  cluster_name = "gke-${local.project_id}}"
   network_name = "gke-network-${local.project_id}"
 }
 
@@ -35,16 +32,16 @@ module "service_accounts" {
   source        = "terraform-google-modules/service-accounts/google"
   version       = ">= 4.0.0"
   project_id    = module.project_factory.project_id
-  prefix        = "gkesa"
+  prefix        = ""
   generate_keys = true
   names         = ["gkeproject"]
   project_roles = [
-    "${module.project_factory.project_name}=>roles/container.admin",
-    "${module.project_factory.project_name}=>roles/container.clusterAdmin",
-    "${module.project_factory.project_name}=>roles/container.clusterViewer",
-    "${module.project_factory.project_name}=>roles/container.developer",
-    "${module.project_factory.project_name}=>roles/container.hostServiceAgentUser",
-    "${module.project_factory.project_name}=>roles/container.viewer"
+    "${local.project_id}=>roles/container.admin",
+    "${local.project_id}=>roles/container.clusterAdmin",
+    "${local.project_id}=>roles/container.clusterViewer",
+    "${local.project_id}=>roles/container.developer",
+    "${local.project_id}=>roles/container.hostServiceAgentUser",
+    "${local.project_id}=>roles/container.viewer"
   ]
   depends_on = [
     module.project_factory
@@ -109,13 +106,13 @@ module "vpc" {
         "pods_subnet" = [
             {
                 range_name    = "pods-subnet-secondary01"
-                ip_cidr_range = var.ip_range_pods_sec 
+                ip_cidr_range = var.ip_range_pods_sec
             },
         ]
          "services_subnet" = [
             {
                 range_name    = "services-subnet-secondary01"
-                ip_cidr_range = var.ip_range_services_sec 
+                ip_cidr_range = var.ip_range_services_sec
             },
         ]
     }
