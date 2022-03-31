@@ -9,9 +9,9 @@ terraform {
       source  = "hashicorp/google-beta"
       version = ">= 4.14.0"
     }
-    gsuite = {
+    googleworkspace = {
       source = "hashicorp/googleworkspace"
-      version = ">= 0.6.0"
+      version = "0.6.0"
     }
    kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -23,7 +23,6 @@ terraform {
     }
   }
 }
-
 provider "google" {
   project      = var.project
   region       = var.region
@@ -72,7 +71,7 @@ provider "helm" {
 }
 
 
-provider "gsuite" {
+provider "googleworkspace"{
   oauth_scopes = [
     "https://www.googleapis.com/auth/admin.directory.group",
     "https://www.googleapis.com/auth/admin.directory.group.member",
