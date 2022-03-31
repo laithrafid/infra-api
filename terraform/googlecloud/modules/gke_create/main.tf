@@ -4,7 +4,7 @@ resource "random_id" "project_id" {
 
 locals {
   project_id   = "${random_id.project_id.hex}"
-  cluster_name = "gke-${local.project_id}"
+  cluster_name = "gke-${random_id.project_id.hex}"
   network_name = "gke-network-${local.project_id}"
 }
 
@@ -65,7 +65,7 @@ module "vpc" {
 
     subnets = [
         {
-            subnet_name               = "${local.network_name}-subnet"
+            subnet_name               = "nodes-subnet"
             subnet_ip                 = "${var.ip_range_nodes}"
             subnet_region             = "${var.region}"
             subnet_private_access     = "true"
@@ -76,7 +76,7 @@ module "vpc" {
             description               = "this subnet for GKE Cluster masters/nodes"
         },
         {
-            subnet_name               = "${local.network_name}-subnet_pods"
+            subnet_name               = "pods-subnet"
             subnet_ip                 = "${var.ip_range_pods}" 
             subnet_region             = "${var.region}"
             subnet_private_access     = "true"
@@ -87,7 +87,7 @@ module "vpc" {
             description               = "this subnet for GKE Cluster pods/containers"
         },
         {
-            subnet_name               = "${local.network_name}-subnet_services"
+            subnet_name               = "services-subnet"
             subnet_ip                 = "${var.ip_range_services}"
             subnet_region             = "${var.region}"
             subnet_private_access     = "true"
@@ -100,21 +100,21 @@ module "vpc" {
     ]
 
     secondary_ranges = {
-        "${local.network_name}-subnet" = [
+        "nodes_subnet" = [
             {
-                range_name    = "${local.network_name}-subnet-secondary-01"
+                range_name    = "nodes-subnet-secondary01"
                 ip_cidr_range = var.ip_range_nodes_sec
             },
         ]
-        "${local.network_name}-subnet_pods" = [
+        "pods_subnet" = [
             {
-                range_name    = "${local.network_name}-subnet_pods-secondary-01"
+                range_name    = "pods-subnet-secondary01"
                 ip_cidr_range = var.ip_range_pods_sec 
             },
         ]
-         "${local.network_name}-subnet_services" = [
+         "services_subnet" = [
             {
-                range_name    = "${local.network_name}-subnet_services-secondary-01"
+                range_name    = "services-subnet-secondary01"
                 ip_cidr_range = var.ip_range_services_sec 
             },
         ]
@@ -122,7 +122,7 @@ module "vpc" {
 
     routes = [
         {
-            name                   = "egress-internet-${local.network_name}"
+            name                   = "egress-internet-kubernetes-network"
             description            = "route through  IGW to access internet"
             destination_range      = "0.0.0.0/0"
             tags                   = "egress-gke"
@@ -135,7 +135,7 @@ module "gke" {
   source                      = "terraform-google-modules/kubernetes-engine/google"
   version                     = "20.0.0"
   project_id                  = module.project_factory.project_id
-  name                        = "${var.project_name}-${var.environment}-${var.cluster_name}"
+  name                        = var.cluster_name
   region                      = var.region
   zones                       = var.cluster_zones
   network                     = module.vpc.network_name
