@@ -70,27 +70,27 @@ variable "shared_vpc_host" {
   default = "false"
 }
 variable "ip_range_nodes" {
-  type    = string
-  description =  "10.10.10.0/24"
+  type        = string
+  description = "10.10.10.0/24"
 }
 variable "ip_range_nodes_sec" {
-  type    = string
+  type        = string
   description = "192.168.64.0/24"
 }
 variable "ip_range_pods" {
-  type    = string
+  type        = string
   description = "10.10.20.0/16"
 }
 variable "ip_range_pods_sec" {
-  type    = string
+  type        = string
   description = "192.168.65.0/16"
 }
 variable "ip_range_services" {
-  type    = string
+  type        = string
   description = "10.10.30.0/24"
 }
 variable "ip_range_services_sec" {
-  type    = string
+  type        = string
   description = "192.168.66.0/16"
 }
 variable "worker_size" {
@@ -201,15 +201,10 @@ variable "workload_metadata_config" {
   description = "Metadata configuration to expose to workloads on the node pool."
   default = [
     {
-      mode = "UNSPECIFIED"
+      mode = "MODE_UNSPECIFIED"
     }
   ]
   type = list(object({
     mode = string
   }))
-}
-variable "project_roles" {
-  type = list(string)
-  default = []
-  description = "project roles give to service account"
 }

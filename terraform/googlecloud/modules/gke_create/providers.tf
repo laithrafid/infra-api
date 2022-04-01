@@ -1,4 +1,12 @@
 terraform {
+  cloud {
+    organization = "bayt"
+    hostname     = "app.terraform.io"
+    workspaces {
+      name = "intra-api-googlecloud"
+      //tags = ["APIs:digitalocean"]
+    }
+  }
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -10,6 +18,7 @@ terraform {
     }
   }
 }
+
 provider "google" {
   project      = var.project_name
   region       = var.region
@@ -41,4 +50,3 @@ provider "google-beta" {
     "https://www.googleapis.com/auth/userinfo.email",
   ]
 }
-

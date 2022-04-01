@@ -3,7 +3,7 @@ resource "random_id" "random_project_id_suffix" {
 }
 
 locals {
-  project_id = "${var.project_name}-${random_id.random_project_id_suffix.hex}"
+  project_id   = "${var.project_name}-${random_id.random_project_id_suffix.hex}"
   cluster_name = "gke-${local.project_id}}"
   network_name = "gke-network-${local.project_id}"
 }
@@ -29,18 +29,7 @@ module "project_factory" {
     google_folder.folder
   ]
 }
-module "service_accounts" {
-  source        = "terraform-google-modules/service-accounts/google"
-  version       = ">= 4.0.0"
-  project_id    = "${module.project_factory.project_id}"
-  prefix        = ""
-  generate_keys = true
-  names         = ["gkeproject"]
-  project_roles = var.project_roles
-  depends_on = [
-    module.project_factory
-  ]
-}
+
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
   version                                = ">= 5.0.0"
@@ -123,30 +112,29 @@ module "vpc" {
 }
 
 module "gke" {
-  source                      = "terraform-google-modules/kubernetes-engine/google"
-  version                     = "20.0.0"
-  project_id                  = module.project_factory.project_id
-  name                        = var.cluster_name
-  region                      = var.region
-  zones                       = var.cluster_zones
-  network                     = module.vpc.network_name
-  subnetwork                  = "${local.network_name}-subnet"
-  ip_range_pods               = "${local.network_name}-subnet_pods"
-  ip_range_services           = "${local.network_name}-subnet_services"
-  http_load_balancing         = var.http_load_balancing
-  remove_default_node_pool    = var.remove_default_node_pool
-  network_policy              = var.network_policy
-  horizontal_pod_autoscaling  = var.horizontal_pod_autoscaling
-  filestore_csi_driver        = var.filestore_csi_driver
-  impersonate_service_account = module.service_accounts.service_account.email
+  source                     = "terraform-google-modules/kubernetes-engine/google"
+  version                    = "20.0.0"
+  project_id                 = module.project_factory.project_id
+  name                       = var.cluster_name
+  region                     = var.region
+  zones                      = var.cluster_zones
+  network                    = module.vpc.network_name
+  subnetwork                 = "${local.network_name}-subnet"
+  ip_range_pods              = "${local.network_name}-subnet_pods"
+  ip_range_services          = "${local.network_name}-subnet_services"
+  http_load_balancing        = var.http_load_balancing
+  remove_default_node_pool   = var.remove_default_node_pool
+  network_policy             = var.network_policy
+  horizontal_pod_autoscaling = var.horizontal_pod_autoscaling
+  filestore_csi_driver       = var.filestore_csi_driver
+  create_service_account     = true
   depends_on = [
     module.project_factory,
     module.vpc,
-    module.service_accounts
   ]
 }
 module "gke_node_pools" {
-  source                   = "../gke_create_node_pool"
+  source                   = "./gke_create_node_pool"
   name                     = "${var.project_name}-${var.environment}-${var.cluster_name}-node-pool"
   cluster                  = module.gke.name
   project_id               = module.project_factory.project_id
@@ -159,7 +147,7 @@ module "gke_node_pools" {
   image_type               = var.node_image_type
   auto_repair              = var.auto_repair
   auto_upgrade             = var.auto_upgrade
-  service_account          = module.service_accounts.service_account.email
+  service_account          = module.gke.service_account
   initial_node_count       = var.min_nodes
   oauth_scopes             = var.gke_node_pool_oauth_scopes
   tags                     = var.gke_node_pool_tags
@@ -170,7 +158,6 @@ module "gke_node_pools" {
   }
   depends_on = [
     module.gke,
-    module.service_accounts,
     module.project_factory
   ]
 }
