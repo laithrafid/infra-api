@@ -119,9 +119,9 @@ module "gke" {
   region                     = var.region
   zones                      = var.cluster_zones
   network                    = module.vpc.network_name
-  subnetwork                 = "${local.network_name}-subnet"
-  ip_range_pods              = "${local.network_name}-subnet_pods"
-  ip_range_services          = "${local.network_name}-subnet_services"
+  subnetwork                 = "nodes-subnet"
+  ip_range_pods              = "pods-subnet"
+  ip_range_services          = "services-subnet"
   http_load_balancing        = var.http_load_balancing
   remove_default_node_pool   = var.remove_default_node_pool
   network_policy             = var.network_policy
