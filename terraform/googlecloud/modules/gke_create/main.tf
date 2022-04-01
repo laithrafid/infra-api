@@ -90,26 +90,26 @@ module "vpc" {
     }
   ]
 
-  # secondary_ranges = {
-  #   "nodes_subnet" = [
-  #     {
-  #       range_name    = "nodes-subnet-secondary01"
-  #       ip_cidr_range = var.ip_range_nodes_sec
-  #     },
-  #   ]
-  #   "pods_subnet" = [
-  #     {
-  #       range_name    = "pods-subnet-secondary01"
-  #       ip_cidr_range = var.ip_range_pods_sec
-  #     },
-  #   ]
-  #   "services_subnet" = [
-  #     {
-  #       range_name    = "services-subnet-secondary01"
-  #       ip_cidr_range = var.ip_range_services_sec
-  #     },
-  #   ]
-  # }
+  secondary_ranges = {
+    "nodes-subnet" = [
+      {
+        range_name    = "nodes-subnet-secondary01"
+        ip_cidr_range = var.ip_range_nodes_sec
+      },
+    ]
+    "pods-subnet" = [
+      {
+        range_name    = "pods-subnet-secondary01"
+        ip_cidr_range = var.ip_range_pods_sec
+      },
+    ]
+    "services-subnet" = [
+      {
+        range_name    = "services-subnet-secondary01"
+        ip_cidr_range = var.ip_range_services_sec
+      },
+    ]
+  }
 
   routes = [
     {
