@@ -36,7 +36,7 @@ module "service_accounts" {
   prefix        = ""
   generate_keys = true
   names         = ["gkeproject"]
-  project_roles = [for project_role in var.project_roles : "${module.project_factory.project_id}=>${project_role}"] 
+  project_roles = var.project_roles
   depends_on = [
     module.project_factory
   ]
