@@ -36,7 +36,10 @@ module "service_accounts" {
   prefix        = ""
   generate_keys = true
   names         = ["gkeproject"]
-  project_roles = var.project_roles
+  project_roles = [for project_role in var.project_roles : "${module.project_factory.project_id}=>${project_role}"] 
+  depends_on = [
+    module.project_factory
+  ]
 }
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
@@ -87,26 +90,26 @@ module "vpc" {
     }
   ]
 
-  secondary_ranges = {
-    "nodes_subnet" = [
-      {
-        range_name    = "nodes-subnet-secondary01"
-        ip_cidr_range = var.ip_range_nodes_sec
-      },
-    ]
-    "pods_subnet" = [
-      {
-        range_name    = "pods-subnet-secondary01"
-        ip_cidr_range = var.ip_range_pods_sec
-      },
-    ]
-    "services_subnet" = [
-      {
-        range_name    = "services-subnet-secondary01"
-        ip_cidr_range = var.ip_range_services_sec
-      },
-    ]
-  }
+  # secondary_ranges = {
+  #   "nodes_subnet" = [
+  #     {
+  #       range_name    = "nodes-subnet-secondary01"
+  #       ip_cidr_range = var.ip_range_nodes_sec
+  #     },
+  #   ]
+  #   "pods_subnet" = [
+  #     {
+  #       range_name    = "pods-subnet-secondary01"
+  #       ip_cidr_range = var.ip_range_pods_sec
+  #     },
+  #   ]
+  #   "services_subnet" = [
+  #     {
+  #       range_name    = "services-subnet-secondary01"
+  #       ip_cidr_range = var.ip_range_services_sec
+  #     },
+  #   ]
+  # }
 
   routes = [
     {
