@@ -208,3 +208,8 @@ variable "workload_metadata_config" {
     mode = string
   }))
 }
+variable "project_roles" {
+  type = list(string)
+  default = []
+  description = "project roles give to service account"
+}

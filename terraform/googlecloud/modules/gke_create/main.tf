@@ -1,6 +1,9 @@
+resource "random_id" "random_project_id_suffix" {
+  byte_length = 2
+}
 
 locals {
-  project_id   = var.project_name
+  project_id = "${var.project_name}-${random_id.random_project_id_suffix.hex}"
   cluster_name = "gke-${local.project_id}}"
   network_name = "gke-network-${local.project_id}"
 }
@@ -26,26 +29,14 @@ module "project_factory" {
     google_folder.folder
   ]
 }
-
-
 module "service_accounts" {
   source        = "terraform-google-modules/service-accounts/google"
   version       = ">= 4.0.0"
-  project_id    = module.project_factory.project_id
+  project_id    = "${module.project_factory.project_id}"
   prefix        = ""
   generate_keys = true
   names         = ["gkeproject"]
-  project_roles = [
-    "${local.project_id}=>roles/container.admin",
-    "${local.project_id}=>roles/container.clusterAdmin",
-    "${local.project_id}=>roles/container.clusterViewer",
-    "${local.project_id}=>roles/container.developer",
-    "${local.project_id}=>roles/container.hostServiceAgentUser",
-    "${local.project_id}=>roles/container.viewer"
-  ]
-  depends_on = [
-    module.project_factory
-  ]
+  project_roles = var.project_roles
 }
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
