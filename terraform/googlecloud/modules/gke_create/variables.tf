@@ -73,25 +73,13 @@ variable "ip_range_nodes" {
   type        = string
   description = "10.10.10.0/24"
 }
-variable "ip_range_nodes_sec" {
+variable "ip_range_pods" {
   type        = string
   description = "192.168.64.0/24"
 }
-variable "ip_range_pods" {
-  type        = string
-  description = "10.10.20.0/16"
-}
-variable "ip_range_pods_sec" {
-  type        = string
-  description = "192.168.65.0/16"
-}
 variable "ip_range_services" {
   type        = string
-  description = "10.10.30.0/24"
-}
-variable "ip_range_services_sec" {
-  type        = string
-  description = "192.168.66.0/16"
+  description = "192.168.64.0/24"
 }
 variable "worker_size" {
   type        = string

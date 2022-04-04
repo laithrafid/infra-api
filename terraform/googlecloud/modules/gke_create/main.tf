@@ -5,7 +5,10 @@ resource "random_id" "random_project_id_suffix" {
 locals {
   project_id   = "${var.project_name}-${random_id.random_project_id_suffix.hex}"
   cluster_name = "gke-${local.project_id}}"
-  network_name = "gke-network-${local.project_id}"
+  network_name = "gke-network-${var.project_name}"
+  nodes-subnet = "${local.network_name}-subnet-nodes"
+  pods-subnet = "${local.network_name}-subnet-pods"
+  services-subnet = "${local.network_name}-subnet-services"
 }
 
 
@@ -45,7 +48,7 @@ module "vpc" {
 
   subnets = [
     {
-      subnet_name               = "nodes-subnet"
+      subnet_name               = "${local.nodes-subnet}"
       subnet_ip                 = "${var.ip_range_nodes}"
       subnet_region             = "${var.region}"
       subnet_private_access     = "true"
@@ -55,57 +58,48 @@ module "vpc" {
       subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
       description               = "this subnet for GKE Cluster masters/nodes"
     },
-    {
-      subnet_name               = "pods-subnet"
-      subnet_ip                 = "${var.ip_range_pods}"
-      subnet_region             = "${var.region}"
-      subnet_private_access     = "true"
-      subnet_flow_logs          = "true"
-      subnet_flow_logs_interval = "INTERVAL_10_MIN"
-      subnet_flow_logs_sampling = 0.7
-      subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
-      description               = "this subnet for GKE Cluster pods/containers"
-    },
-    {
-      subnet_name               = "services-subnet"
-      subnet_ip                 = "${var.ip_range_services}"
-      subnet_region             = "${var.region}"
-      subnet_private_access     = "true"
-      subnet_flow_logs          = "true"
-      subnet_flow_logs_interval = "INTERVAL_10_MIN"
-      subnet_flow_logs_sampling = 0.7
-      subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
-      description               = "this subnet for GKE services in $cluster"
-    }
   ]
-
   secondary_ranges = {
-    "nodes-subnet" = [
+    (local.nodes-subnet) = [
       {
-        range_name    = "nodes-subnet-secondary01"
-        ip_cidr_range = var.ip_range_nodes_sec
+        range_name    = "${local.pods-subnet}"
+        ip_cidr_range = var.ip_range_pods
       },
-    ]
-    "pods-subnet" = [
-      {
-        range_name    = "pods-subnet-secondary01"
-        ip_cidr_range = var.ip_range_pods_sec
-      },
-    ]
-    "services-subnet" = [
-      {
-        range_name    = "services-subnet-secondary01"
-        ip_cidr_range = var.ip_range_services_sec
+       {
+        range_name    = "${local.services-subnet}"
+        ip_cidr_range = var.ip_range_services
       },
     ]
   }
-
+   firewall_rules = [
+    {
+      name      = "allow-ssh-ingress"
+      direction = "INGRESS"
+      ranges    = ["0.0.0.0/0"]
+      allow = [{
+        protocol = "tcp"
+        ports    = ["22"]
+      }]
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
+    },
+    {
+      name      = "deny-udp-egress"
+      direction = "INGRESS"
+      ranges    = ["0.0.0.0/0"]
+      deny = [{
+        protocol = "udp"
+        ports    = null
+      }]
+    },
+  ]
   routes = [
     {
       name              = "egress-internet-kubernetes-network"
       description       = "route through  IGW to access internet"
       destination_range = "0.0.0.0/0"
-      tags              = "egress-gke"
+      tags              = "egress-gke"  
       next_hop_internet = "true"
     },
   ]
@@ -119,9 +113,9 @@ module "gke" {
   region                     = var.region
   zones                      = var.cluster_zones
   network                    = module.vpc.network_name
-  subnetwork                 = "nodes-subnet"
-  ip_range_pods              = "pods-subnet"
-  ip_range_services          = "services-subnet"
+  subnetwork                 = "${module.vpc.subnets_names[0]}"
+  ip_range_pods              = "${local.pods-subnet}"
+  ip_range_services          = "${local.services-subnet}"
   http_load_balancing        = var.http_load_balancing
   remove_default_node_pool   = var.remove_default_node_pool
   network_policy             = var.network_policy
