@@ -32,6 +32,25 @@ module "project_factory" {
     google_folder.folder
   ]
 }
+resource "google_pubsub_topic" "budget" {
+  name    = "budget-topic-${module.project_factory.project_id}"
+  project = module.project_factory.project_id
+}
+module "budget_project_factory" {
+  source                 = "terraform-google-modules/project-factory/google"
+  version                = ">= 12.0.0"
+  billing_account        = var.billing_account
+  budget_display_name    = "${module.project_factory.project_id}-budget"
+  projects               = [module.project_factory.project_id]
+  amount                 = var.budget_amount
+  credit_types_treatment = var.budget_credit_types_treatment
+  services               = var.budget_services
+  alert_spent_percents   = var.budget_alert_spent_percents
+  alert_pubsub_topic     = "projects/${module.project_factory.project_id}/topics/${google_pubsub_topic.budget.name}"
+  labels                = {
+    "cost-center" : "bayt-training"
+  }
+}
 
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
