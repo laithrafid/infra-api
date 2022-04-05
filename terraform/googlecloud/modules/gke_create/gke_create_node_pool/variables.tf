@@ -185,7 +185,7 @@ variable "metadata" {
 }
 
 variable "tags" {
-  type = list(string)
+  type        = list(string)
   description = "(Optional) The list of instance tags applied to all nodes. Tags are used to identify valid sources or targets for network firewalls."
   default     = []
 }

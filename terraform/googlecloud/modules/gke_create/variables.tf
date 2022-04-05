@@ -209,11 +209,18 @@ variable "budget_alert_spent_percents" {
 }
 
 variable "budget_services" {
-  description = "A list of services to be included in the budget"
+  description = "A list of services to be included in the budget https://cloud.google.com/skus/"
   type        = list(string)
   default = [
     "6F81-5844-456A", # Compute Engine
-    "A1E8-BE35-7EBC"  # Pub/Sub
+    "CCD8-9BF1-090E", # Kubernetes Engine
+    "A1E8-BE35-7EBC", # Pub/Sub
+    "9186-F79E-3871", # Anthos
+    "36A9-155B-23F0", # API Gateway
+    "149C-F9EC-3994", # Artifact Registry
+    "CD87-46A2-EE79", # Anthos Config Management
+    "3DAD-B96D-BE09", # Anthos Service Mesh
+    "E505-1604-58F8"  # Networking
   ]
 }
 

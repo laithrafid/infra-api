@@ -23,7 +23,7 @@ variable "organization_id" {
 variable "activate_apis" {
   type = list(string)
   default = ["compute.googleapis.com",
-            "container.googleapis.com"]
+  "container.googleapis.com"]
 }
 variable "lien" {
   description = "Add a lien on the project to prevent accidental deletion"

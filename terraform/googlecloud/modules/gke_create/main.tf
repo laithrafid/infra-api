@@ -3,11 +3,11 @@ resource "random_id" "random_project_id_suffix" {
 }
 
 locals {
-  project_id   = "${var.project_name}-${random_id.random_project_id_suffix.hex}"
-  cluster_name = "gke-${local.project_id}}"
-  network_name = "gke-network-${var.project_name}"
-  nodes-subnet = "${local.network_name}-subnet-nodes"
-  pods-subnet = "${local.network_name}-subnet-pods"
+  project_id      = "${var.project_name}-${random_id.random_project_id_suffix.hex}"
+  cluster_name    = "gke-${local.project_id}}"
+  network_name    = "gke-network-${var.project_name}"
+  nodes-subnet    = "${local.network_name}-subnet-nodes"
+  pods-subnet     = "${local.network_name}-subnet-pods"
   services-subnet = "${local.network_name}-subnet-services"
 }
 
@@ -26,29 +26,33 @@ module "project_factory" {
   billing_account = var.billing_account
   folder_id       = google_folder.folder.id
   activate_apis   = var.activate_apis
-  consumer_quotas = var.consumer_quotas
   lien            = var.lien
   depends_on = [
     google_folder.folder
   ]
 }
+module "quota_project_factory" {
+  source          = "terraform-google-modules/project-factory/google//modules/quota_manager"
+  project_id      = module.project_factory.project_id
+  consumer_quotas = var.consumer_quotas
+}
+
 resource "google_pubsub_topic" "budget" {
   name    = "budget-topic-${module.project_factory.project_id}"
   project = module.project_factory.project_id
 }
 module "budget_project_factory" {
-  source                 = "terraform-google-modules/project-factory/google"
+  source                 = "terraform-google-modules/project-factory/google//modules/budget"
   version                = ">= 12.0.0"
   billing_account        = var.billing_account
-  budget_display_name    = "${module.project_factory.project_id}-budget"
   projects               = [module.project_factory.project_id]
   amount                 = var.budget_amount
   credit_types_treatment = var.budget_credit_types_treatment
   services               = var.budget_services
   alert_spent_percents   = var.budget_alert_spent_percents
   alert_pubsub_topic     = "projects/${module.project_factory.project_id}/topics/${google_pubsub_topic.budget.name}"
-  labels                = {
-    "cost-center" : "bayt-training"
+  labels = {
+    "Enviornment" : "dev"
   }
 }
 
@@ -84,13 +88,13 @@ module "vpc" {
         range_name    = "${local.pods-subnet}"
         ip_cidr_range = var.ip_range_pods
       },
-       {
+      {
         range_name    = "${local.services-subnet}"
         ip_cidr_range = var.ip_range_services
       },
     ]
   }
-   firewall_rules = [
+  firewall_rules = [
     {
       name      = "allow-ssh-ingress"
       direction = "INGRESS"
@@ -118,7 +122,7 @@ module "vpc" {
       name              = "egress-internet-kubernetes-network"
       description       = "route through  IGW to access internet"
       destination_range = "0.0.0.0/0"
-      tags              = "egress-gke"  
+      tags              = "egress-gke"
       next_hop_internet = "true"
     },
   ]
@@ -132,9 +136,9 @@ module "gke" {
   region                     = var.region
   zones                      = var.cluster_zones
   network                    = module.vpc.network_name
-  subnetwork                 = "${module.vpc.subnets_names[0]}"
-  ip_range_pods              = "${local.pods-subnet}"
-  ip_range_services          = "${local.services-subnet}"
+  subnetwork                 = module.vpc.subnets_names[0]
+  ip_range_pods              = local.pods-subnet
+  ip_range_services          = local.services-subnet
   http_load_balancing        = var.http_load_balancing
   remove_default_node_pool   = var.remove_default_node_pool
   network_policy             = var.network_policy
@@ -170,6 +174,7 @@ module "gke_node_pools" {
     all-pools = "true"
   }
   depends_on = [
+    budget_project_factory,
     module.gke,
     module.project_factory
   ]

@@ -15,7 +15,7 @@ output "enabled_apis" {
 }
 output "quota_overrides" {
   description = "The server-generated names of the quota override in the provided project."
-  value       = module.project_factory.quota_overrides
+  value       = module.quota_project_factory.quota_overrides
 }
 output "vpc" {
   value       = module.vpc
@@ -95,28 +95,22 @@ output "pubsub_topic" {
   description = "The PubSub topic name created for budget alerts"
   value       = google_pubsub_topic.budget.name
 }
-
-output "budget_project_factory" {
-  description = "The name of the budget created"
-  value       = module.budget_project_factory.name
-}
-
 output "budget_amount" {
   description = "The amount to use for the budget"
-  value       = module.budget_project_factory.amount
+  value       = var.budget_amount
 }
 
 output "budget_alert_spent_percents" {
   description = "The list of percentages of the budget to alert on"
-  value       = module.budget_project_factory.budget_alert_spent_percents
+  value       = var.budget_alert_spent_percents
 }
 
 output "budget_services" {
   description = "A list of services to be included in the budget"
-  value       = module.budget_project_factory.budget_services
+  value       = var.budget_services
 }
 
 output "budget_credit_types_treatment" {
   description = "Specifies how credits should be treated when determining spend for threshold calculations"
-  value       = module.budget_project_factory.budget_credit_types_treatment
+  value       = var.budget_credit_types_treatment
 }
