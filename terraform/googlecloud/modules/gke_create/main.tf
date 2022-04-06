@@ -26,7 +26,8 @@ module "project_factory" {
   billing_account = var.billing_account
   folder_id       = google_folder.folder.id
   activate_apis   = var.activate_apis
-  lien            = var.lien
+  create_project_sa	= false 
+  lien              = var.lien
   depends_on = [
     google_folder.folder
   ]
@@ -44,6 +45,9 @@ resource "google_pubsub_topic" "budget" {
 module "budget_project_factory" {
   source                 = "terraform-google-modules/project-factory/google//modules/budget"
   version                = ">= 12.0.0"
+  providers = {
+    google = google.project
+  }
   billing_account        = var.billing_account
   projects               = [module.project_factory.project_id]
   amount                 = var.budget_amount
@@ -54,8 +58,11 @@ module "budget_project_factory" {
   labels = {
     "Enviornment" : "dev"
   }
+  depends_on = [
+    google_pubsub_topic.budget,
+    module.project_factory
+  ]
 }
-
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
   version                                = ">= 5.0.0"
@@ -174,7 +181,7 @@ module "gke_node_pools" {
     all-pools = "true"
   }
   depends_on = [
-    budget_project_factory,
+    # module.budget_project_factory,
     module.gke,
     module.project_factory
   ]

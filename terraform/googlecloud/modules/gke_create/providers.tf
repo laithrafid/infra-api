@@ -23,6 +23,7 @@ provider "google" {
   project      = var.project_name
   region       = var.region
   access_token = var.GOOGLECLOUD_TOKEN
+  # credentials  = var.credentials
   scopes = [
     # Default scopes
     "https://www.googleapis.com/auth/compute",
@@ -34,11 +35,17 @@ provider "google" {
     "https://www.googleapis.com/auth/userinfo.email",
   ]
 }
-
+# provider "google" {
+#   alias = "project"
+#   access_token = var.GOOGLECLOUD_TOKEN
+#   billing_project = var.project_name
+# }
 provider "google-beta" {
   project      = var.project_name
   region       = var.region
   access_token = var.GOOGLECLOUD_TOKEN
+  # credentials  = var.credentials
+
   scopes = [
     # Default scopes
     "https://www.googleapis.com/auth/compute",
