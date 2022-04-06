@@ -50,7 +50,7 @@ variable "region" {
   default     = "northamerica-northeast1"
 }
 variable "cluster_zones" {
-  type = list(string)
+  type        = list(string)
   description = "The zones to host the cluster in (optional if regional cluster / required if zonal)"
   default = [
     "northamerica-northeast1-a",
@@ -64,9 +64,9 @@ variable "cluster_type" {
   default     = true
 }
 variable "node_locations" {
-  type = string
+  type        = string
   description = "The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. Defaults to cluster level node locations if nothing is specified"
-  default = "northamerica-northeast1-a, northamerica-northeast1-b, northamerica-northeast1-c"
+  default     = "northamerica-northeast1-a, northamerica-northeast1-b, northamerica-northeast1-c"
 }
 variable "auto_create_subnetworks" {
   type    = string
@@ -183,7 +183,7 @@ variable "gke_node_pool_oauth_scopes" {
   nullable    = true
   type        = map(list(string))
   description = "Map of lists containing node oauth scopes by node-pool name Scopes that are used by NAP when creating node pools."
- default = {
+  default = {
     all               = ["https://www.googleapis.com/auth/cloud-platform"]
     default-node-pool = []
   }
@@ -191,11 +191,11 @@ variable "gke_node_pool_oauth_scopes" {
 variable "gke_node_pool_tags" {
   type        = map(list(string))
   description = "The list of instance tags applied to all nodes. Tags are used to identify valid sources or targets for network firewalls."
-   default = {
+  default = {
     all               = []
     default-node-pool = []
   }
-  nullable    = true
+  nullable = true
 }
 variable "filestore_csi_driver" {
   type        = bool
@@ -207,12 +207,12 @@ variable "local_ssd_count" {
   description = "number of locally attached ssds to node"
 }
 variable "node_pools_metadata" {
-  type = map(map(string))
+  type        = map(map(string))
   description = "Metadata configuration to expose to workloads on the node pool."
   default = {
-  all =  {},
-  default-node-pool = {}
-}
+    all               = {},
+    default-node-pool = {}
+  }
 }
 variable "kubernetes_version" {
   type    = string
@@ -271,7 +271,7 @@ variable "node_pools_taints" {
   type        = map(list(object({ key = string, value = string, effect = string })))
   default = {
     all               = []
-    default-node-pool =  []
+    default-node-pool = []
   }
 }
 variable "node_pools_labels" {

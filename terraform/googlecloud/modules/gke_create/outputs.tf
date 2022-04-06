@@ -74,29 +74,29 @@ output "subnets_secondary_ranges" {
   description = "The secondary ranges associated with these subnets"
 }
 output "cluster_name" {
-  value = module.gke.name
+  value       = module.gke.name
   description = "Cluster name"
 }
 output "kubernetes_endpoint" {
-  sensitive = true
-  value     = module.gke.endpoint
+  sensitive   = true
+  value       = module.gke.endpoint
   description = "Cluster endpoint"
 }
 output "ca_certificate" {
-  value     = module.gke.ca_certificate
-  sensitive = true
+  value       = module.gke.ca_certificate
+  sensitive   = true
   description = "Cluster ca certificate (base64 encoded)"
 }
 output "type" {
-  value = module.gke.type
+  value       = module.gke.type
   description = "Cluster type (regional / zonal)"
 }
 output "location" {
-  value = module.gke.location
+  value       = module.gke.location
   description = "Cluster location (region if regional cluster, zone if zonal cluster)"
 }
 output "service_account" {
-  value = module.gke.service_account
+  value       = module.gke.service_account
   description = "The service account to default running nodes as if not overridden in node_pools."
 }
 
