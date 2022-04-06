@@ -42,27 +42,27 @@ resource "google_pubsub_topic" "budget" {
   name    = "budget-topic-${module.project_factory.project_id}"
   project = module.project_factory.project_id
 }
-module "budget_project_factory" {
-  source                 = "terraform-google-modules/project-factory/google//modules/budget"
-  version                = ">= 12.0.0"
-  providers = {
-    google = google.project
-  }
-  billing_account        = var.billing_account
-  projects               = [module.project_factory.project_id]
-  amount                 = var.budget_amount
-  credit_types_treatment = var.budget_credit_types_treatment
-  services               = var.budget_services
-  alert_spent_percents   = var.budget_alert_spent_percents
-  alert_pubsub_topic     = "projects/${module.project_factory.project_id}/topics/${google_pubsub_topic.budget.name}"
-  labels = {
-    "Enviornment" : "dev"
-  }
-  depends_on = [
-    google_pubsub_topic.budget,
-    module.project_factory
-  ]
-}
+# module "budget_project_factory" {
+#   source                 = "terraform-google-modules/project-factory/google//modules/budget"
+#   version                = ">= 12.0.0"
+#   providers = {
+#     google = google.project
+#   }
+#   billing_account        = var.billing_account
+#   projects               = [module.project_factory.project_id]
+#   amount                 = var.budget_amount
+#   credit_types_treatment = var.budget_credit_types_treatment
+#   services               = var.budget_services
+#   alert_spent_percents   = var.budget_alert_spent_percents
+#   alert_pubsub_topic     = "projects/${module.project_factory.project_id}/topics/${google_pubsub_topic.budget.name}"
+#   labels = {
+#     "Enviornment" : "dev"
+#   }
+#   depends_on = [
+#     google_pubsub_topic.budget,
+#     module.project_factory
+#   ]
+# }
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
   version                                = ">= 5.0.0"
