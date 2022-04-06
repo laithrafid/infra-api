@@ -7,10 +7,15 @@ terraform {
       //tags = ["APIs:digitalocean"]
     }
   }
+  required_version = ">= 0.13"
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 4.14.0"
+      version = ">= 4.16.0"
+    }
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = ">= 4.16.0"
     }
     gsuite = {
       source  = "hashicorp/googleworkspace"
@@ -23,37 +28,11 @@ provider "google" {
   project      = var.project_name
   region       = var.region
   access_token = var.GOOGLECLOUD_TOKEN
-  # credentials  = var.credentials
-  scopes = [
-    # Default scopes
-    "https://www.googleapis.com/auth/compute",
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-    "https://www.googleapis.com/auth/devstorage.full_control",
-
-    # Required for google_client_openid_userinfo
-    "https://www.googleapis.com/auth/userinfo.email",
-  ]
+  # credentials  = "${file(var.credentials_path)}"
 }
-# provider "google" {
-#   alias = "project"
-#   access_token = var.GOOGLECLOUD_TOKEN
-#   billing_project = var.project_name
-# }
 provider "google-beta" {
   project      = var.project_name
   region       = var.region
   access_token = var.GOOGLECLOUD_TOKEN
-  # credentials  = var.credentials
-
-  scopes = [
-    # Default scopes
-    "https://www.googleapis.com/auth/compute",
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-    "https://www.googleapis.com/auth/devstorage.full_control",
-
-    # Required for google_client_openid_userinfo
-    "https://www.googleapis.com/auth/userinfo.email",
-  ]
+  # credentials  = "${file(var.credentials_path)}"
 }

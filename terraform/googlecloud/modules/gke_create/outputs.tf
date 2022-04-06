@@ -1,21 +1,21 @@
 output "project_name" {
-  value = module.project_factory.project_name
+  value = module.project_create.project_name
 }
 
 output "project_id" {
-  value = module.project_factory.project_id
+  value = module.project_create.project_id
 }
 
 output "project_number" {
-  value = module.project_factory.project_number
+  value = module.project_create.project_number
 }
 output "enabled_apis" {
   description = "Enabled APIs in the project"
-  value       = module.project_factory.enabled_apis
+  value       = module.project_create.enabled_apis
 }
 output "quota_overrides" {
-  description = "The server-generated names of the quota override in the provided project."
-  value       = module.quota_project_factory.quota_overrides
+  description = "The server-generated names of the quota override."
+  value       = var.consumer_quotas
 }
 output "vpc" {
   value       = module.vpc
@@ -73,28 +73,34 @@ output "subnets_secondary_ranges" {
   value       = [for network in module.vpc.subnets : network.secondary_ip_range]
   description = "The secondary ranges associated with these subnets"
 }
-output "cluster_location" {
-  value = module.gke.location
-}
-output "service_account" {
-  value = module.gke.service_account
-}
 output "cluster_name" {
   value = module.gke.name
+  description = "Cluster name"
 }
 output "kubernetes_endpoint" {
   sensitive = true
   value     = module.gke.endpoint
+  description = "Cluster endpoint"
 }
 output "ca_certificate" {
   value     = module.gke.ca_certificate
   sensitive = true
+  description = "Cluster ca certificate (base64 encoded)"
+}
+output "type" {
+  value = module.gke.type
+  description = "Cluster type (regional / zonal)"
+}
+output "location" {
+  value = module.gke.location
+  description = "Cluster location (region if regional cluster, zone if zonal cluster)"
+}
+output "service_account" {
+  value = module.gke.service_account
+  description = "The service account to default running nodes as if not overridden in node_pools."
 }
 
-output "pubsub_topic" {
-  description = "The PubSub topic name created for budget alerts"
-  value       = google_pubsub_topic.budget.name
-}
+
 output "budget_amount" {
   description = "The amount to use for the budget"
   value       = var.budget_amount

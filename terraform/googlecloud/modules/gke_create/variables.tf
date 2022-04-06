@@ -51,11 +51,22 @@ variable "region" {
 }
 variable "cluster_zones" {
   type = list(string)
+  description = "The zones to host the cluster in (optional if regional cluster / required if zonal)"
   default = [
     "northamerica-northeast1-a",
     "northamerica-northeast1-b",
     "northamerica-northeast1-c"
   ]
+}
+variable "cluster_type" {
+  type        = bool
+  description = "Whether is a regional cluster (zonal cluster if set false. WARNING: changing this after cluster creation is destructive!)"
+  default     = true
+}
+variable "node_locations" {
+  type = string
+  description = "The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. Defaults to cluster level node locations if nothing is specified"
+  default = "northamerica-northeast1-a, northamerica-northeast1-b, northamerica-northeast1-c"
 }
 variable "auto_create_subnetworks" {
   type    = string
@@ -170,14 +181,20 @@ variable "remove_default_node_pool" {
 }
 variable "gke_node_pool_oauth_scopes" {
   nullable    = true
-  description = "(Optional) Scopes that are used by NAP when creating node pools."
-  default     = []
-  type        = list(string)
+  type        = map(list(string))
+  description = "Map of lists containing node oauth scopes by node-pool name Scopes that are used by NAP when creating node pools."
+ default = {
+    all               = ["https://www.googleapis.com/auth/cloud-platform"]
+    default-node-pool = []
+  }
 }
 variable "gke_node_pool_tags" {
-  type        = list(string)
+  type        = map(list(string))
   description = "The list of instance tags applied to all nodes. Tags are used to identify valid sources or targets for network firewalls."
-  default     = []
+   default = {
+    all               = []
+    default-node-pool = []
+  }
   nullable    = true
 }
 variable "filestore_csi_driver" {
@@ -185,16 +202,36 @@ variable "filestore_csi_driver" {
   description = "The status of the Filestore CSI driver addon, which allows the usage of filestore instance as volumes"
   default     = false
 }
-variable "workload_metadata_config" {
+variable "local_ssd_count" {
+  type        = number
+  description = "number of locally attached ssds to node"
+}
+variable "node_pools_metadata" {
+  type = map(map(string))
   description = "Metadata configuration to expose to workloads on the node pool."
-  default = [
-    {
-      mode = "MODE_UNSPECIFIED"
-    }
-  ]
-  type = list(object({
-    mode = string
-  }))
+  default = {
+  all =  {},
+  default-node-pool = {}
+}
+}
+variable "kubernetes_version" {
+  type    = string
+  default = "latest"
+}
+variable "monitoring_service" {
+  type        = string
+  description = "The monitoring service that the cluster should write metrics to. Automatically send metrics from pods in the cluster to the Google Cloud Monitoring API. VM metrics will be collected by Google Compute Engine regardless of this setting Available options include monitoring.googleapis.com, monitoring.googleapis.com/kubernetes (beta) and none"
+  default     = "monitoring.googleapis.com/kubernetes"
+}
+variable "logging_service" {
+  type        = string
+  description = "The logging service that the cluster should write logs to. Available options include logging.googleapis.com, logging.googleapis.com/kubernetes (beta), and none	"
+  default     = "logging.googleapis.com/kubernetes"
+}
+variable "cluster_specific_service_account" {
+  type        = bool
+  default     = true
+  description = "Defines if service account specified to run nodes should be created, The service account to run nodes as if not overridden in node_pools. The create_service_account variable default value (true) will cause a cluster-specific service account to be created."
 }
 variable "budget_amount" {
   description = "The amount to use for the budget"
@@ -228,4 +265,28 @@ variable "budget_credit_types_treatment" {
   description = "Specifies how credits should be treated when determining spend for threshold calculations"
   type        = string
   default     = "EXCLUDE_ALL_CREDITS"
+}
+variable "node_pools_taints" {
+  description = "Map of lists containing node taints by node-pool name"
+  type        = map(list(object({ key = string, value = string, effect = string })))
+  default = {
+    all               = []
+    default-node-pool =  []
+  }
+}
+variable "node_pools_labels" {
+  description = "Map of maps containing node labels by node-pool name	"
+  type        = map(map(string))
+  default = {
+    all               = {}
+    default-node-pool = {}
+  }
+}
+variable "notification_channels" {
+  type        = object({ number = string, email = string })
+  description = "notification methods will be created"
+  default = {
+    email  = ""
+    number = ""
+  }
 }
