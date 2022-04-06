@@ -205,6 +205,7 @@ variable "filestore_csi_driver" {
 variable "local_ssd_count" {
   type        = number
   description = "number of locally attached ssds to node"
+  default = 0
 }
 variable "node_pools_metadata" {
   type        = map(map(string))
