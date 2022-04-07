@@ -26,8 +26,8 @@ module "project_create" {
   project_id        = local.project_id
   org_id            = var.organization_id
   billing_account   = var.billing_account
-  folder_id         = google_folder.folder.id
   activate_apis     = var.activate_apis
+  folder_id         = google_folder.folder.id
   create_project_sa = false
   lien              = var.lien
   depends_on = [
@@ -45,6 +45,9 @@ resource "google_monitoring_notification_channel" "email" {
   labels = {
     email_address = "${var.notification_channels.email}"
   }
+  depends_on = [
+    module.project_create
+  ]
 }
 resource "google_monitoring_notification_channel" "sms" {
   project      = module.project_create.project_id
@@ -53,15 +56,27 @@ resource "google_monitoring_notification_channel" "sms" {
   labels = {
     number = "${var.notification_channels.number}"
   }
+  depends_on = [
+    module.project_create
+  ]
 }
 data "google_pubsub_topic" "budget" {
   name = "budget-topic-${var.project_name}"
+  depends_on = [
+    google_pubsub_topic.budget
+  ]
 }
 data "google_monitoring_notification_channel" "sms" {
   display_name = "SMS Channel"
+  depends_on = [
+    google_monitoring_notification_channel.sms
+  ]
 }
 data "google_monitoring_notification_channel" "email" {
   display_name = "Email Channel"
+  depends_on = [
+    google_monitoring_notification_channel.email
+  ]
 }
 
 module "project_config" {
@@ -78,6 +93,12 @@ module "project_config" {
   budget_display_name         = data.google_pubsub_topic.budget.name
   budget_monitoring_notification_channels = ["${data.google_monitoring_notification_channel.sms.name}",
   "${data.google_monitoring_notification_channel.email.name}"]
+  depends_on = [
+    google_pubsub_topic.budget,
+    google_monitoring_notification_channel.email,
+    google_monitoring_notification_channel.sms
+
+  ]
 }
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
@@ -89,7 +110,7 @@ module "vpc" {
   shared_vpc_host                        = var.shared_vpc_host
   routing_mode                           = "GLOBAL"
   depends_on = [
-    module.project_create
+    module.project_config
   ]
 
   subnets = [

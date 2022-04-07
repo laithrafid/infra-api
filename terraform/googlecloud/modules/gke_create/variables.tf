@@ -2,6 +2,10 @@ variable "GOOGLECLOUD_TOKEN" {
   type      = string
   sensitive = true
 }
+# variable "credentials_path" {
+#   type = string
+#   sensitive = true
+# }
 variable "environment" {
   type    = string
   default = "dev"
@@ -26,8 +30,25 @@ variable "organization_id" {
 }
 variable "activate_apis" {
   type = list(string)
-  default = ["compute.googleapis.com",
-  "container.googleapis.com"]
+  default = [
+  "compute.googleapis.com",
+  "serviceusage.googleapis.com",
+  "container.googleapis.com",
+  "servicemanagement.googleapis.com",
+  "servicecontrol.googleapis.com",
+  "endpoints.googleapis.com",
+  "servicenetworking.googleapis.com",
+  "logging.googleapis.com",
+  "bigquery.googleapis.com",
+  "cloudresourcemanager.googleapis.com",
+  "billingbudgets.googleapis.com",
+  "cloudbilling.googleapis.com",
+  "iam.googleapis.com",
+  "admin.googleapis.com",
+  "appengine.googleapis.com",
+  "storage-api.googleapis.com",
+  "monitoring.googleapis.com"
+  ]
 }
 variable "lien" {
   description = "Add a lien on the project to prevent accidental deletion"
