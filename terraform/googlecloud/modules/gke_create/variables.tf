@@ -31,23 +31,23 @@ variable "organization_id" {
 variable "activate_apis" {
   type = list(string)
   default = [
-  "compute.googleapis.com",
-  "serviceusage.googleapis.com",
-  "container.googleapis.com",
-  "servicemanagement.googleapis.com",
-  "servicecontrol.googleapis.com",
-  "endpoints.googleapis.com",
-  "servicenetworking.googleapis.com",
-  "logging.googleapis.com",
-  "bigquery.googleapis.com",
-  "cloudresourcemanager.googleapis.com",
-  "billingbudgets.googleapis.com",
-  "cloudbilling.googleapis.com",
-  "iam.googleapis.com",
-  "admin.googleapis.com",
-  "appengine.googleapis.com",
-  "storage-api.googleapis.com",
-  "monitoring.googleapis.com"
+    "compute.googleapis.com",
+    "serviceusage.googleapis.com",
+    "container.googleapis.com",
+    "servicemanagement.googleapis.com",
+    "servicecontrol.googleapis.com",
+    "endpoints.googleapis.com",
+    "servicenetworking.googleapis.com",
+    "logging.googleapis.com",
+    "bigquery.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "billingbudgets.googleapis.com",
+    "cloudbilling.googleapis.com",
+    "iam.googleapis.com",
+    "admin.googleapis.com",
+    "appengine.googleapis.com",
+    "storage-api.googleapis.com",
+    "monitoring.googleapis.com"
   ]
 }
 variable "lien" {
@@ -226,7 +226,7 @@ variable "filestore_csi_driver" {
 variable "local_ssd_count" {
   type        = number
   description = "number of locally attached ssds to node"
-  default = 0
+  default     = 0
 }
 variable "node_pools_metadata" {
   type        = map(map(string))
