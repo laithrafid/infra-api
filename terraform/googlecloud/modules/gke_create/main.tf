@@ -6,10 +6,10 @@ locals {
   project         = "${var.project_name}-${random_id.random_project_id_suffix.hex}"
   project_id      = local.project
   cluster_name    = "gke-${local.project_id}}"
-  network_name    = "gke-network-${var.project_name}"
-  nodes-subnet    = "${local.network_name}-subnet-nodes"
-  pods-subnet     = "${local.network_name}-subnet-pods"
-  services-subnet = "${local.network_name}-subnet-services"
+  network_name    = "gke-network"
+  nodes-subnet    = "gke-network-subnet-nodes"
+  pods-subnet     = "gke-network-subnet-pods"
+  services-subnet = "gke-network-subnet-services"
   nodepool_name   = "${var.project_name}-${var.environment}-${var.cluster_name}-node-pool"
 }
 
@@ -37,7 +37,7 @@ module "project_create" {
 }
 
 module "project_config" {
-  source                      = "../project_config"
+  source                      = "./project_config/"
   amount                      = var.budget_amount
   billing_account             = var.billing_account
   consumer_quotas             = var.consumer_quotas

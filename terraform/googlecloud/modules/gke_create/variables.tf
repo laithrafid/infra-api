@@ -73,15 +73,40 @@ variable "secondary_ranges" {
   description = "Secondary ranges that will be used in some of the subnets"
   type = map(list(object({
     range_name = string,
-  ip_cidr_range = string })))
+    ip_cidr_range = string })
+    )
+    )
 }
 variable "firewall_rules" {
-  type        = list(map(string))
+  default = []
   description = "List of firewall rules"
+  type = list(object({
+    name                    = string
+    description             = string
+    direction               = string
+    priority                = number
+    ranges                  = list(string)
+    source_tags             = list(string)
+    source_service_accounts = list(string)
+    target_tags             = list(string)
+    target_service_accounts = list(string)
+    allow = list(object({
+      protocol = string
+      ports    = list(string)
+    }))
+    deny = list(object({
+      protocol = string
+      ports    = list(string)
+    }))
+    log_config = object({
+      metadata = string
+    })
+  }))
 }
 variable "routes" {
   description = "List of routes being created in this VPC"
   type        = list(map(string))
+  default     = []
 }
 variable "routing_mode" {
   description = "The network routing mode (default 'GLOBAL')	"
@@ -124,18 +149,6 @@ variable "delete_default_internet_gateway_routes" {
 variable "shared_vpc_host" {
   type    = string
   default = "false"
-}
-variable "ip_range_nodes" {
-  type        = string
-  description = "10.10.10.0/24"
-}
-variable "ip_range_pods" {
-  type        = string
-  description = "192.168.64.0/24"
-}
-variable "ip_range_services" {
-  type        = string
-  description = "192.168.64.0/24"
 }
 variable "worker_size" {
   type        = string

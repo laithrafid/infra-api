@@ -7,7 +7,7 @@ variable "project_id" {
 variable "monitoring_notification_channels" {
   type = list(string)
   description = "list of already created monitoring notification channels"
-  default = null
+  default = []
 }
 variable "notification_channels_sms" {
   description = "phone number to be notified +13333333333"
