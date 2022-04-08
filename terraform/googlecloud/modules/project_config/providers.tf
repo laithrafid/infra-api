@@ -1,12 +1,4 @@
 terraform {
-  cloud {
-    organization = "bayt"
-    hostname     = "app.terraform.io"
-    workspaces {
-      name = "intra-api-googlecloud"
-      //tags = ["APIs:digitalocean"]
-    }
-  }
   required_version = ">= 0.13"
   required_providers {
     google = {
@@ -16,10 +8,6 @@ terraform {
     google-beta = {
       source  = "hashicorp/google-beta"
       version = ">= 4.16.0"
-    }
-    gsuite = {
-      source  = "hashicorp/googleworkspace"
-      version = ">= 0.6.0"
     }
   }
 }

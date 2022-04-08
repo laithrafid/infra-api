@@ -1,0 +1,21 @@
+alert_pubsub_topic = ""
+alert_spend_basis  = "CURRENT_SPEND"
+alert_spent_percents = [
+  0.5,
+  0.7,
+  1
+]
+amount                           = ""
+billing_account                  = ""
+consumer_quotas                  = ""
+create_budget                    = true
+credit_types_treatment           = "INCLUDE_ALL_CREDITS"
+display_name                     = ""
+labels                           = {}
+monitoring_notification_channels = []
+notification_channels_email      = ""
+notification_channels_sms        = ""
+project_id                       = ""
+project_name                     = ""
+projects                         = ""
+services                         = ""

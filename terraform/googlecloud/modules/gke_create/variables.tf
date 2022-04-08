@@ -284,7 +284,7 @@ variable "budget_services" {
 }
 
 variable "budget_credit_types_treatment" {
-  description = "Specifies how credits should be treated when determining spend for threshold calculations"
+  description = "Specifies how credits should be treated when determining spend for threshold calculations example INCLUDE_ALL_CREDITS"
   type        = string
   default     = "EXCLUDE_ALL_CREDITS"
 }

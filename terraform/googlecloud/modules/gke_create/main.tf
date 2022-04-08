@@ -34,70 +34,23 @@ module "project_create" {
     google_folder.folder
   ]
 }
-resource "google_pubsub_topic" "budget" {
-  name    = "budget-topic-${var.project_name}"
-  project = module.project_create.project_id
-}
-resource "google_monitoring_notification_channel" "email" {
-  project      = module.project_create.project_id
-  display_name = "Email Channel"
-  type         = "email"
-  labels = {
-    email_address = "${var.notification_channels.email}"
-  }
-  depends_on = [
-    module.project_create
-  ]
-}
-resource "google_monitoring_notification_channel" "sms" {
-  project      = module.project_create.project_id
-  display_name = "SMS Channel"
-  type         = "sms"
-  labels = {
-    number = "${var.notification_channels.number}"
-  }
-  depends_on = [
-    module.project_create
-  ]
-}
-data "google_pubsub_topic" "budget" {
-  name = "budget-topic-${var.project_name}"
-  depends_on = [
-    google_pubsub_topic.budget
-  ]
-}
-data "google_monitoring_notification_channel" "sms" {
-  display_name = "SMS Channel"
-  depends_on = [
-    google_monitoring_notification_channel.sms
-  ]
-}
-data "google_monitoring_notification_channel" "email" {
-  display_name = "Email Channel"
-  depends_on = [
-    google_monitoring_notification_channel.email
-  ]
-}
 
 module "project_config" {
-  source                      = "terraform-google-modules/project-factory/google"
-  version                     = ">= 12.0.0"
-  name                        = module.project_create.project_name
-  project_id                  = module.project_create.project_id
+  source                      = "../project_config"
+  amount                      = var.budget_amount
   billing_account             = var.billing_account
-  org_id                      = var.organization_id
   consumer_quotas             = var.consumer_quotas
-  budget_alert_pubsub_topic   = "projects/${module.project_create.project_id}/topics/${data.google_pubsub_topic.budget.name}"
-  budget_alert_spent_percents = var.budget_alert_spent_percents
-  budget_amount               = var.budget_amount
-  budget_display_name         = data.google_pubsub_topic.budget.name
-  budget_monitoring_notification_channels = ["${data.google_monitoring_notification_channel.sms.name}",
-  "${data.google_monitoring_notification_channel.email.name}"]
+  create_budget               = true
+  credit_types_treatment      = var.budget_credit_types_treatment
+  notification_channels_email = var.notification_channels.email
+  notification_channels_sms   = var.notification_channels.number
+  project_id                  = module.project_create.project_id
+  project_name                = var.project_name
+  services                    = var.budget_services
+  alert_spent_percents        = var.budget_alert_spent_percents
+  alert_spend_basis           = var.alert_spend_basis
   depends_on = [
-    google_pubsub_topic.budget,
-    google_monitoring_notification_channel.email,
-    google_monitoring_notification_channel.sms
-
+    module.project_create
   ]
 }
 module "vpc" {
