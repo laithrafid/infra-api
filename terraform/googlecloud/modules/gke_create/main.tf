@@ -68,7 +68,8 @@ module "vpc" {
   firewall_rules                         = var.firewall_rules
   routes                                 = var.routes
   depends_on = [
-    module.project_config
+    #module.project_config
+    module.project_create
   ]
 }
 module "gke" {

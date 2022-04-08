@@ -1,0 +1,253 @@
+2022-04-08T07:10:08.552-0400 [INFO]  Terraform version: 1.1.7
+2022-04-08T07:10:08.555-0400 [INFO]  Go runtime version: go1.17.6
+2022-04-08T07:10:08.555-0400 [INFO]  CLI args: []string{"terraform", "apply", "-var-file=terraform.tfvars", "-auto-approve", "-no-color"}
+2022-04-08T07:10:08.555-0400 [DEBUG] Attempting to open CLI config file: /Users/laithrafid/.terraformrc
+2022-04-08T07:10:08.555-0400 [DEBUG] File doesn't exist, but doesn't need to. Ignoring.
+2022-04-08T07:10:08.557-0400 [INFO]  Loading CLI configuration from /Users/laithrafid/.terraform.d/credentials.tfrc.json
+2022-04-08T07:10:08.558-0400 [DEBUG] ignoring non-existing provider search directory terraform.d/plugins
+2022-04-08T07:10:08.558-0400 [DEBUG] ignoring non-existing provider search directory /Users/laithrafid/.terraform.d/plugins
+2022-04-08T07:10:08.558-0400 [DEBUG] ignoring non-existing provider search directory /Users/laithrafid/Library/Application Support/io.terraform/plugins
+2022-04-08T07:10:08.558-0400 [DEBUG] ignoring non-existing provider search directory /Library/Application Support/io.terraform/plugins
+2022-04-08T07:10:08.559-0400 [INFO]  CLI command args: []string{"apply", "-var-file=terraform.tfvars", "-auto-approve", "-no-color"}
+2022-04-08T07:10:08.571-0400 [DEBUG] Service discovery for app.terraform.io at https://app.terraform.io/.well-known/terraform.json
+2022-04-08T07:10:11.706-0400 [DEBUG] checking for provisioner in "."
+2022-04-08T07:10:11.715-0400 [DEBUG] checking for provisioner in "/usr/local/bin"
+2022-04-08T07:10:11.988-0400 [INFO]  cloud: starting Apply operation
+Running apply in Terraform Cloud. Output will stream here. Pressing Ctrl-C
+will cancel the remote apply if it's still pending. If the apply started it
+will stop streaming the logs, but will not stop the apply running remotely.
+
+Preparing the remote apply...
+
+To view this run in a browser, visit:
+https://app.terraform.io/app/bayt/intra-api-googlecloud/runs/run-yUsJ1x5uzZq1KGPf
+
+Waiting for the plan to start...
+
+Terraform v1.1.7
+on linux_amd64
+Configuring remote state backend...
+Initializing Terraform configuration...
+random_id.random_project_id_suffix: Refreshing state... [id=t_w]
+google_folder.folder: Refreshing state... [id=folders/1045833981390]
+module.project_create.module.project-factory.random_id.random_project_id_suffix: Refreshing state... [id=5ng]
+module.project_create.module.project-factory.google_project.main: Refreshing state... [id=projects/kubernetes-cluster-b7fc]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["cloudbilling.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/cloudbilling.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["container.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/container.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["cloudresourcemanager.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/cloudresourcemanager.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["servicemanagement.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/servicemanagement.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["monitoring.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/monitoring.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["servicenetworking.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/servicenetworking.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["compute.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/compute.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["bigquery.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/bigquery.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["servicecontrol.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/servicecontrol.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["appengine.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/appengine.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["billingbudgets.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/billingbudgets.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["endpoints.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/endpoints.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["serviceusage.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/serviceusage.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["admin.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/admin.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["iam.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/iam.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["storage-api.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/storage-api.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["logging.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b7fc/logging.googleapis.com]
+module.project_create.module.project-factory.google_project_default_service_accounts.default_service_accounts[0]: Refreshing state... [id=projects/kubernetes-cluster-b7fc]
+module.vpc.module.vpc.google_compute_network.network: Refreshing state... [id=projects/kubernetes-cluster-b7fc/global/networks/gke-network]
+module.vpc.module.firewall_rules.google_compute_firewall.rules["allow-ssh-ingress"]: Refreshing state... [id=projects/kubernetes-cluster-b7fc/global/firewalls/allow-ssh-ingress]
+module.vpc.module.firewall_rules.google_compute_firewall.rules["deny-udp-egress"]: Refreshing state... [id=projects/kubernetes-cluster-b7fc/global/firewalls/deny-udp-egress]
+module.vpc.module.subnets.google_compute_subnetwork.subnetwork["northamerica-northeast1/gke-network-subnet-nodes"]: Refreshing state... [id=projects/kubernetes-cluster-b7fc/regions/northamerica-northeast1/subnetworks/gke-network-subnet-nodes]
+module.vpc.module.routes.google_compute_route.route["egress-internet-kubernetes-network"]: Refreshing state... [id=projects/kubernetes-cluster-b7fc/global/routes/egress-internet-kubernetes-network]
+module.gke.random_string.cluster_service_account_suffix: Refreshing state... [id=yghp]
+module.gke.google_service_account.cluster_service_account[0]: Refreshing state... [id=projects/kubernetes-cluster-b7fc/serviceAccounts/tf-gke-gke-yghp@kubernetes-cluster-b7fc.iam.gserviceaccount.com]
+module.gke.google_project_iam_member.cluster_service_account-log_writer[0]: Refreshing state... [id=kubernetes-cluster-b7fc/roles/logging.logWriter/serviceAccount:tf-gke-gke-yghp@kubernetes-cluster-b7fc.iam.gserviceaccount.com]
+module.gke.random_shuffle.available_zones: Refreshing state... [id=-]
+module.gke.google_project_iam_member.cluster_service_account-metric_writer[0]: Refreshing state... [id=kubernetes-cluster-b7fc/roles/monitoring.metricWriter/serviceAccount:tf-gke-gke-yghp@kubernetes-cluster-b7fc.iam.gserviceaccount.com]
+module.gke.google_container_cluster.primary: Refreshing state... [id=projects/kubernetes-cluster-b7fc/locations/northamerica-northeast1/clusters/gke]
+module.gke.google_project_iam_member.cluster_service_account-monitoring_viewer[0]: Refreshing state... [id=kubernetes-cluster-b7fc/roles/monitoring.viewer/serviceAccount:tf-gke-gke-yghp@kubernetes-cluster-b7fc.iam.gserviceaccount.com]
+module.gke.google_project_iam_member.cluster_service_account-resourceMetadata-writer[0]: Refreshing state... [id=kubernetes-cluster-b7fc/roles/stackdriver.resourceMetadata.writer/serviceAccount:tf-gke-gke-yghp@kubernetes-cluster-b7fc.iam.gserviceaccount.com]
+module.gke.google_container_node_pool.pools["kubernetes-cluster-dev-gke-node-pool"]: Refreshing state... [id=projects/kubernetes-cluster-b7fc/locations/northamerica-northeast1/clusters/gke/nodePools/kubernetes-cluster-dev-gke-node-pool]
+
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply":
+
+  # module.gke.google_container_node_pool.pools["kubernetes-cluster-dev-gke-node-pool"] has been deleted
+  - resource "google_container_node_pool" "pools" {
+      - cluster            = "gke" -> null
+      - id                 = "projects/kubernetes-cluster-b7fc/locations/northamerica-northeast1/clusters/gke/nodePools/kubernetes-cluster-dev-gke-node-pool" -> null
+      - initial_node_count = 3 -> null
+      - location           = "northamerica-northeast1" -> null
+      - name               = "kubernetes-cluster-dev-gke-node-pool" -> null
+      - node_locations     = [
+          - "northamerica-northeast1-a",
+          - "northamerica-northeast1-b",
+          - "northamerica-northeast1-c",
+        ] -> null
+      - project            = "kubernetes-cluster-b7fc" -> null
+
+      - autoscaling {
+          - max_node_count = 4 -> null
+          - min_node_count = 3 -> null
+        }
+
+      - management {
+          - auto_repair  = true -> null
+          - auto_upgrade = true -> null
+        }
+
+      - node_config {
+          - disk_size_gb      = 30 -> null
+          - disk_type         = "pd-standard" -> null
+          - guest_accelerator = [] -> null
+          - image_type        = "cos_containerd" -> null
+          - labels            = {
+              - "cluster_name" = "gke"
+              - "node_pool"    = "kubernetes-cluster-dev-gke-node-pool"
+            } -> null
+          - local_ssd_count   = 0 -> null
+          - machine_type      = "e2-medium" -> null
+          - metadata          = {
+              - "cluster_name"             = "gke"
+              - "disable-legacy-endpoints" = "true"
+              - "node_pool"                = "kubernetes-cluster-dev-gke-node-pool"
+            } -> null
+          - oauth_scopes      = [
+              - "https://www.googleapis.com/auth/cloud-platform",
+            ] -> null
+          - preemptible       = false -> null
+          - service_account   = "tf-gke-gke-yghp@kubernetes-cluster-b7fc.iam.gserviceaccount.com" -> null
+          - tags              = [
+              - "gke-gke",
+              - "gke-gke-kubernetes-cluster-dev-gke-node-pool",
+            ] -> null
+          - taint             = [] -> null
+
+          - shielded_instance_config {
+              - enable_integrity_monitoring = true -> null
+              - enable_secure_boot          = false -> null
+            }
+
+          - workload_metadata_config {
+              - mode = "GKE_METADATA" -> null
+            }
+        }
+
+      - timeouts {
+          - create = "45m" -> null
+          - delete = "45m" -> null
+          - update = "45m" -> null
+        }
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.gke.google_container_node_pool.pools["kubernetes-cluster-dev-gke-node-pool"] will be created
+  + resource "google_container_node_pool" "pools" {
+      + cluster                     = "gke"
+      + id                          = (known after apply)
+      + initial_node_count          = 3
+      + instance_group_urls         = (known after apply)
+      + location                    = "northamerica-northeast1"
+      + managed_instance_group_urls = (known after apply)
+      + max_pods_per_node           = (known after apply)
+      + name                        = "kubernetes-cluster-dev-gke-node-pool"
+      + name_prefix                 = (known after apply)
+      + node_count                  = (known after apply)
+      + node_locations              = [
+          + "northamerica-northeast1-a",
+          + "northamerica-northeast1-b",
+          + "northamerica-northeast1-c",
+        ]
+      + operation                   = (known after apply)
+      + project                     = "kubernetes-cluster-b7fc"
+      + version                     = (known after apply)
+
+      + autoscaling {
+          + max_node_count = 4
+          + min_node_count = 3
+        }
+
+      + management {
+          + auto_repair  = true
+          + auto_upgrade = true
+        }
+
+      + node_config {
+          + disk_size_gb      = 30
+          + disk_type         = "pd-standard"
+          + guest_accelerator = []
+          + image_type        = "cos_containerd"
+          + labels            = {
+              + "cluster_name" = "gke"
+              + "node_pool"    = "kubernetes-cluster-dev-gke-node-pool"
+            }
+          + local_ssd_count   = 0
+          + machine_type      = "e2-medium"
+          + metadata          = {
+              + "cluster_name"             = "gke"
+              + "disable-legacy-endpoints" = "true"
+              + "node_pool"                = "kubernetes-cluster-dev-gke-node-pool"
+            }
+          + oauth_scopes      = [
+              + "https://www.googleapis.com/auth/cloud-platform",
+            ]
+          + preemptible       = false
+          + service_account   = "tf-gke-gke-yghp@kubernetes-cluster-b7fc.iam.gserviceaccount.com"
+          + tags              = [
+              + "gke-gke",
+              + "gke-gke-kubernetes-cluster-dev-gke-node-pool",
+            ]
+          + taint             = (known after apply)
+
+          + shielded_instance_config {
+              + enable_integrity_monitoring = true
+              + enable_secure_boot          = false
+            }
+
+          + workload_metadata_config {
+              + mode = "GKE_METADATA"
+            }
+        }
+
+      + timeouts {
+          + create = "45m"
+          + delete = "45m"
+          + update = "45m"
+        }
+
+      + upgrade_settings {
+          + max_surge       = (known after apply)
+          + max_unavailable = (known after apply)
+        }
+    }
+
+  # module.gke.module.gcloud_delete_default_kube_dns_configmap.module.gcloud_kubectl.null_resource.module_depends_on[0] will be created
+  + resource "null_resource" "module_depends_on" {
+      + id       = (known after apply)
+      + triggers = {
+          + "value" = "2"
+        }
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+
+module.gke.google_container_node_pool.pools["kubernetes-cluster-dev-gke-node-pool"]: Creating...
+╷
+│ Error: error creating NodePool: googleapi: Error 403: Insufficient regional quota to satisfy request: resource "IN_USE_ADDRESSES": request requires '9.0' and is short '1.0'. project has a quota of '8.0' with '8.0' available. View and manage quotas at https://console.cloud.google.com/iam-admin/quotas?usage=USED&project=kubernetes-cluster-b7fc., forbidden
+│ 
+│   with module.gke.google_container_node_pool.pools["kubernetes-cluster-dev-gke-node-pool"],
+│   on .terraform/modules/gke/cluster.tf line 223, in resource "google_container_node_pool" "pools":
+│  223: resource "google_container_node_pool" "pools" {
+│ 
+╵
