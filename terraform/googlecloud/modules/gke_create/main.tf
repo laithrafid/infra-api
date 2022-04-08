@@ -36,24 +36,24 @@ module "project_create" {
   ]
 }
 
-module "project_config" {
-  source                      = "./project_config/"
-  amount                      = var.budget_amount
-  billing_account             = var.billing_account
-  consumer_quotas             = var.consumer_quotas
-  create_budget               = true
-  credit_types_treatment      = var.budget_credit_types_treatment
-  notification_channels_email = var.notification_channels.email
-  notification_channels_sms   = var.notification_channels.number
-  project_id                  = module.project_create.project_id
-  project_name                = var.project_name
-  services                    = var.budget_services
-  alert_spent_percents        = var.budget_alert_spent_percents
-  alert_spend_basis           = var.budget_alert_spend_basis
-  depends_on = [
-    module.project_create
-  ]
-}
+# module "project_config" {
+#   source                      = "./project_config/"
+#   amount                      = var.budget_amount
+#   billing_account             = var.billing_account
+#   consumer_quotas             = var.consumer_quotas
+#   create_budget               = true
+#   credit_types_treatment      = var.budget_credit_types_treatment
+#   notification_channels_email = var.notification_channels.email
+#   notification_channels_sms   = var.notification_channels.number
+#   project_id                  = module.project_create.project_id
+#   project_name                = var.project_name
+#   services                    = var.budget_services
+#   alert_spent_percents        = var.budget_alert_spent_percents
+#   alert_spend_basis           = var.budget_alert_spend_basis
+#   depends_on = [
+#     module.project_create
+#   ]
+# }
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
   version                                = ">= 5.0.0"
