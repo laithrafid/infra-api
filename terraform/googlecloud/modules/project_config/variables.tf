@@ -4,6 +4,11 @@ variable "project_name" {
 variable "project_id" {
   type = string
 }
+variable "monitoring_notification_channels" {
+  type = list(string)
+  description = "list of already created monitoring notification channels"
+  default = null
+}
 variable "notification_channels_sms" {
   description = "phone number to be notified +13333333333"
   type        = string
@@ -20,6 +25,7 @@ variable "billing_account" {
 variable "projects" {
   description = "The project ids to include in this budget. If empty budget will include all projects"
   type        = list(string)
+  default = []
 }
 
 variable "amount" {

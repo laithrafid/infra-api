@@ -10,6 +10,7 @@ locals {
   nodes-subnet    = "${local.network_name}-subnet-nodes"
   pods-subnet     = "${local.network_name}-subnet-pods"
   services-subnet = "${local.network_name}-subnet-services"
+  nodepool_name   = "${var.project_name}-${var.environment}-${var.cluster_name}-node-pool"
 }
 
 
@@ -48,7 +49,7 @@ module "project_config" {
   project_name                = var.project_name
   services                    = var.budget_services
   alert_spent_percents        = var.budget_alert_spent_percents
-  alert_spend_basis           = var.alert_spend_basis
+  alert_spend_basis           = var.budget_alert_spend_basis
   depends_on = [
     module.project_create
   ]
@@ -61,70 +62,15 @@ module "vpc" {
   auto_create_subnetworks                = var.auto_create_subnetworks
   delete_default_internet_gateway_routes = var.delete_default_internet_gateway_routes
   shared_vpc_host                        = var.shared_vpc_host
-  routing_mode                           = "GLOBAL"
+  routing_mode                           = var.routing_mode
+  subnets                                = var.subnets
+  secondary_ranges                       = var.secondary_ranges
+  firewall_rules                         = var.firewall_rules
+  routes                                 = var.routes
   depends_on = [
     module.project_config
   ]
-
-  subnets = [
-    {
-      subnet_name               = "${local.nodes-subnet}"
-      subnet_ip                 = "${var.ip_range_nodes}"
-      subnet_region             = "${var.region}"
-      subnet_private_access     = "true"
-      subnet_flow_logs          = "true"
-      subnet_flow_logs_interval = "INTERVAL_10_MIN"
-      subnet_flow_logs_sampling = 0.7
-      subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
-      description               = "this subnet for GKE Cluster masters/nodes"
-    },
-  ]
-  secondary_ranges = {
-    (local.nodes-subnet) = [
-      {
-        range_name    = "${local.pods-subnet}"
-        ip_cidr_range = var.ip_range_pods
-      },
-      {
-        range_name    = "${local.services-subnet}"
-        ip_cidr_range = var.ip_range_services
-      },
-    ]
-  }
-  firewall_rules = [
-    {
-      name      = "allow-ssh-ingress"
-      direction = "INGRESS"
-      ranges    = ["0.0.0.0/0"]
-      allow = [{
-        protocol = "tcp"
-        ports    = ["22"]
-      }]
-      log_config = {
-        metadata = "INCLUDE_ALL_METADATA"
-      }
-    },
-    {
-      name      = "deny-udp-egress"
-      direction = "INGRESS"
-      ranges    = ["0.0.0.0/0"]
-      deny = [{
-        protocol = "udp"
-        ports    = null
-      }]
-    },
-  ]
-  routes = [
-    {
-      name              = "egress-internet-kubernetes-network"
-      description       = "route through  IGW to access internet"
-      destination_range = "0.0.0.0/0"
-      tags              = "egress-gke"
-      next_hop_internet = "true"
-    },
-  ]
 }
-
 module "gke" {
   source                     = "terraform-google-modules/kubernetes-engine/google"
   version                    = "20.0.0"
@@ -134,7 +80,7 @@ module "gke" {
   project_id                 = module.project_create.project_id
   name                       = var.cluster_name
   region                     = var.region
-  regional                   = var.cluster_type
+  regional                   = var.cluster_type_regional
   zones                      = var.cluster_zones
   network                    = module.vpc.network_name
   subnetwork                 = module.vpc.subnets_names[0]
@@ -147,25 +93,25 @@ module "gke" {
   filestore_csi_driver       = var.filestore_csi_driver
   create_service_account     = var.cluster_specific_service_account
   node_pools_oauth_scopes    = var.gke_node_pool_oauth_scopes
-  node_pools_metadata        = var.node_pools_metadata
+  node_pools_metadata        = var.gke_node_pools_metadata
   node_pools_tags            = var.gke_node_pool_tags
-  node_pools_labels          = var.node_pools_labels
-  node_pools_taints          = var.node_pools_taints
+  node_pools_labels          = var.gke_node_pools_labels
+  node_pools_taints          = var.gke_node_pools_taints
   node_pools = [
     {
-      name               = "${var.project_name}-${var.environment}-${var.cluster_name}-node-pool"
-      machine_type       = var.worker_size
-      node_locations     = "${var.node_locations}"
-      min_count          = var.min_nodes
-      max_count          = var.max_nodes
-      local_ssd_count    = var.local_ssd_count
-      disk_size_gb       = var.disk_size_gb
-      disk_type          = var.disk_type
-      image_type         = var.node_image_type
-      auto_repair        = var.auto_repair
-      auto_upgrade       = var.auto_upgrade
-      preemptible        = var.is_preemptible
-      initial_node_count = var.min_nodes
+      name               = "${local.nodepool_name}"
+      machine_type       = "${var.worker_size}"
+      node_locations     = "${var.gke_node_locations}"
+      min_count          = "${var.min_nodes}"
+      max_count          = "${var.max_nodes}"
+      local_ssd_count    = "${var.local_ssd_count}"
+      disk_size_gb       = "${var.disk_size_gb}"
+      disk_type          = "${var.disk_type}"
+      image_type         = "${var.node_image_type}"
+      auto_repair        = "${var.auto_repair}"
+      auto_upgrade       = "${var.auto_upgrade}"
+      preemptible        = "${var.is_preemptible}"
+      initial_node_count = "${var.min_nodes}"
     },
   ]
   depends_on = [

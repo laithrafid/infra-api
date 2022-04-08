@@ -44,7 +44,7 @@ budget_services = [
 ]
 cluster_name                     = "gke"
 cluster_specific_service_account = true
-cluster_type                     = true
+cluster_type_regional            = true
 cluster_zones = [
   "northamerica-northeast1-a",
   "northamerica-northeast1-b",
@@ -76,9 +76,9 @@ kubernetes_version         = "latest"
 lien                       = false
 local_ssd_count            = 0
 logging_service            = "logging.googleapis.com/kubernetes"
+monitoring_service         = "monitoring.googleapis.com/kubernetes"
 max_nodes                  = 4
 min_nodes                  = 3
-monitoring_service         = "monitoring.googleapis.com/kubernetes"
 network_policy             = false
 node_image_type            = ""
 node_locations             = "northamerica-northeast1-a, northamerica-northeast1-b, northamerica-northeast1-c"

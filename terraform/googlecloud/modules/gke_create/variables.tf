@@ -65,6 +65,30 @@ variable "consumer_quotas" {
   }))
   default = []
 }
+variable "subnets" {
+  description = "The list of subnets being created"
+  type        = list(map(string))
+}
+variable "secondary_ranges" {
+  description = "Secondary ranges that will be used in some of the subnets"
+  type = map(list(object({
+    range_name = string,
+  ip_cidr_range = string })))
+}
+variable "firewall_rules" {
+  type        = list(map(string))
+  description = "List of firewall rules"
+}
+variable "routes" {
+  description = "List of routes being created in this VPC"
+  type        = list(map(string))
+}
+variable "routing_mode" {
+  description = "The network routing mode (default 'GLOBAL')	"
+  type        = string
+  default     = "GLOBAL"
+}
+
 variable "region" {
   type        = string
   description = "The zones to host the cluster in (optional if regional cluster / required if zonal)"
@@ -79,12 +103,12 @@ variable "cluster_zones" {
     "northamerica-northeast1-c"
   ]
 }
-variable "cluster_type" {
+variable "cluster_type_regional" {
   type        = bool
   description = "Whether is a regional cluster (zonal cluster if set false. WARNING: changing this after cluster creation is destructive!)"
   default     = true
 }
-variable "node_locations" {
+variable "gke_node_locations" {
   type        = string
   description = "The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. Defaults to cluster level node locations if nothing is specified"
   default     = "northamerica-northeast1-a, northamerica-northeast1-b, northamerica-northeast1-c"
@@ -147,8 +171,6 @@ variable "disk_type" {
   default     = "pd-standard"
   description = "(Optional) Type of the disk attached to each node (e.g. 'pd-standard', 'pd-balanced' or 'pd-ssd')."
 }
-
-
 variable "node_image_type" {
   type        = string
   nullable    = true
@@ -228,7 +250,7 @@ variable "local_ssd_count" {
   description = "number of locally attached ssds to node"
   default     = 0
 }
-variable "node_pools_metadata" {
+variable "gke_node_pools_metadata" {
   type        = map(map(string))
   description = "Metadata configuration to expose to workloads on the node pool."
   default = {
@@ -282,13 +304,18 @@ variable "budget_services" {
     "E505-1604-58F8"  # Networking
   ]
 }
+variable "budget_alert_spend_basis" {
+  description = "The type of basis used to determine if spend has passed the threshold"
+  type        = string
+  default     = "CURRENT_SPEND"
+}
 
 variable "budget_credit_types_treatment" {
   description = "Specifies how credits should be treated when determining spend for threshold calculations example INCLUDE_ALL_CREDITS"
   type        = string
   default     = "EXCLUDE_ALL_CREDITS"
 }
-variable "node_pools_taints" {
+variable "gke_node_pools_taints" {
   description = "Map of lists containing node taints by node-pool name"
   type        = map(list(object({ key = string, value = string, effect = string })))
   default = {
@@ -296,7 +323,7 @@ variable "node_pools_taints" {
     default-node-pool = []
   }
 }
-variable "node_pools_labels" {
+variable "gke_node_pools_labels" {
   description = "Map of maps containing node labels by node-pool name	"
   type        = map(map(string))
   default = {
