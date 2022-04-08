@@ -1,0 +1,843 @@
+2022-04-08T05:01:36.429-0400 [INFO]  Terraform version: 1.1.7
+2022-04-08T05:01:36.429-0400 [INFO]  Go runtime version: go1.17.6
+2022-04-08T05:01:36.429-0400 [INFO]  CLI args: []string{"terraform", "apply", "-var-file=terraform.tfvars", "-auto-approve", "-no-color"}
+2022-04-08T05:01:36.429-0400 [DEBUG] Attempting to open CLI config file: /Users/laithrafid/.terraformrc
+2022-04-08T05:01:36.429-0400 [DEBUG] File doesn't exist, but doesn't need to. Ignoring.
+2022-04-08T05:01:36.431-0400 [INFO]  Loading CLI configuration from /Users/laithrafid/.terraform.d/credentials.tfrc.json
+2022-04-08T05:01:36.432-0400 [DEBUG] ignoring non-existing provider search directory terraform.d/plugins
+2022-04-08T05:01:36.432-0400 [DEBUG] ignoring non-existing provider search directory /Users/laithrafid/.terraform.d/plugins
+2022-04-08T05:01:36.432-0400 [DEBUG] ignoring non-existing provider search directory /Users/laithrafid/Library/Application Support/io.terraform/plugins
+2022-04-08T05:01:36.432-0400 [DEBUG] ignoring non-existing provider search directory /Library/Application Support/io.terraform/plugins
+2022-04-08T05:01:36.432-0400 [INFO]  CLI command args: []string{"apply", "-var-file=terraform.tfvars", "-auto-approve", "-no-color"}
+2022-04-08T05:01:36.447-0400 [DEBUG] Service discovery for app.terraform.io at https://app.terraform.io/.well-known/terraform.json
+2022-04-08T05:01:46.374-0400 [DEBUG] checking for provisioner in "."
+2022-04-08T05:01:46.382-0400 [DEBUG] checking for provisioner in "/usr/local/bin"
+2022-04-08T05:01:46.489-0400 [INFO]  cloud: starting Apply operation
+Running apply in Terraform Cloud. Output will stream here. Pressing Ctrl-C
+will cancel the remote apply if it's still pending. If the apply started it
+will stop streaming the logs, but will not stop the apply running remotely.
+
+Preparing the remote apply...
+
+To view this run in a browser, visit:
+https://app.terraform.io/app/bayt/intra-api-googlecloud/runs/run-wxSpDCd7EUFXc5sv
+
+Waiting for the plan to start...
+
+Terraform v1.1.7
+on linux_amd64
+Configuring remote state backend...
+Initializing Terraform configuration...
+random_id.random_project_id_suffix: Refreshing state... [id=s7s]
+google_folder.folder: Refreshing state... [id=folders/256720291612]
+module.project_create.module.project-factory.random_id.random_project_id_suffix: Refreshing state... [id=_5A]
+module.project_create.module.project-factory.google_project.main: Refreshing state... [id=projects/kubernetes-cluster-b3bb]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["cloudresourcemanager.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/cloudresourcemanager.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["storage-api.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/storage-api.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["bigquery.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/bigquery.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["compute.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/compute.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["servicenetworking.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/servicenetworking.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["monitoring.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/monitoring.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["endpoints.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/endpoints.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["billingbudgets.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/billingbudgets.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["cloudbilling.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/cloudbilling.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["logging.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/logging.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["servicemanagement.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/servicemanagement.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["iam.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/iam.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["serviceusage.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/serviceusage.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["admin.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/admin.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["servicecontrol.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/servicecontrol.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["appengine.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/appengine.googleapis.com]
+module.project_create.module.project-factory.module.project_services.google_project_service.project_services["container.googleapis.com"]: Refreshing state... [id=kubernetes-cluster-b3bb/container.googleapis.com]
+module.project_create.module.project-factory.google_project_default_service_accounts.default_service_accounts[0]: Refreshing state... [id=projects/kubernetes-cluster-b3bb]
+module.project_config.google_monitoring_notification_channel.sms: Refreshing state... [id=projects/kubernetes-cluster-b3bb/notificationChannels/7094690384155591244]
+module.project_config.google_monitoring_notification_channel.email: Refreshing state... [id=projects/kubernetes-cluster-b3bb/notificationChannels/10917842551719216784]
+module.project_config.google_pubsub_topic.budget: Refreshing state... [id=projects/kubernetes-cluster-b3bb/topics/budget-topic-kubernetes-cluster]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # module.gke.data.google_compute_zones.available will be read during apply
+  # (config refers to values not yet known)
+ <= data "google_compute_zones" "available"  {
+      + id      = (known after apply)
+      + names   = (known after apply)
+      + project = "kubernetes-cluster-b3bb"
+      + region  = "northamerica-northeast1"
+    }
+
+  # module.gke.data.google_container_engine_versions.region will be read during apply
+  # (config refers to values not yet known)
+ <= data "google_container_engine_versions" "region"  {
+      + default_cluster_version         = (known after apply)
+      + id                              = (known after apply)
+      + latest_master_version           = (known after apply)
+      + latest_node_version             = (known after apply)
+      + location                        = "northamerica-northeast1"
+      + project                         = "kubernetes-cluster-b3bb"
+      + release_channel_default_version = (known after apply)
+      + valid_master_versions           = (known after apply)
+      + valid_node_versions             = (known after apply)
+    }
+
+  # module.gke.data.google_container_engine_versions.zone will be read during apply
+  # (config refers to values not yet known)
+ <= data "google_container_engine_versions" "zone"  {
+      + default_cluster_version         = (known after apply)
+      + id                              = (known after apply)
+      + latest_master_version           = (known after apply)
+      + latest_node_version             = (known after apply)
+      + location                        = "northamerica-northeast1-a"
+      + project                         = "kubernetes-cluster-b3bb"
+      + release_channel_default_version = (known after apply)
+      + valid_master_versions           = (known after apply)
+      + valid_node_versions             = (known after apply)
+    }
+
+  # module.gke.google_container_cluster.primary will be created
+  + resource "google_container_cluster" "primary" {
+      + cluster_ipv4_cidr           = (known after apply)
+      + datapath_provider           = (known after apply)
+      + default_max_pods_per_node   = 110
+      + enable_binary_authorization = false
+      + enable_intranode_visibility = (known after apply)
+      + enable_kubernetes_alpha     = false
+      + enable_legacy_abac          = false
+      + enable_shielded_nodes       = true
+      + endpoint                    = (known after apply)
+      + id                          = (known after apply)
+      + label_fingerprint           = (known after apply)
+      + location                    = "northamerica-northeast1"
+      + logging_service             = "logging.googleapis.com/kubernetes"
+      + master_version              = (known after apply)
+      + min_master_version          = (known after apply)
+      + monitoring_service          = "monitoring.googleapis.com/kubernetes"
+      + name                        = "gke"
+      + network                     = "projects/kubernetes-cluster-b3bb/global/networks/gke-network"
+      + networking_mode             = (known after apply)
+      + node_locations              = [
+          + "northamerica-northeast1-a",
+          + "northamerica-northeast1-b",
+          + "northamerica-northeast1-c",
+        ]
+      + node_version                = (known after apply)
+      + operation                   = (known after apply)
+      + private_ipv6_google_access  = (known after apply)
+      + project                     = "kubernetes-cluster-b3bb"
+      + remove_default_node_pool    = false
+      + self_link                   = (known after apply)
+      + services_ipv4_cidr          = (known after apply)
+      + subnetwork                  = "projects/kubernetes-cluster-b3bb/regions/northamerica-northeast1/subnetworks/gke-network-subnet-nodes"
+      + tpu_ipv4_cidr_block         = (known after apply)
+
+      + addons_config {
+          + cloudrun_config {
+              + disabled           = (known after apply)
+              + load_balancer_type = (known after apply)
+            }
+
+          + gcp_filestore_csi_driver_config {
+              + enabled = false
+            }
+
+          + horizontal_pod_autoscaling {
+              + disabled = true
+            }
+
+          + http_load_balancing {
+              + disabled = false
+            }
+
+          + network_policy_config {
+              + disabled = true
+            }
+        }
+
+      + authenticator_groups_config {
+          + security_group = (known after apply)
+        }
+
+      + cluster_autoscaling {
+          + enabled = false
+
+          + auto_provisioning_defaults {
+              + image_type      = (known after apply)
+              + oauth_scopes    = (known after apply)
+              + service_account = (known after apply)
+            }
+        }
+
+      + confidential_nodes {
+          + enabled = (known after apply)
+        }
+
+      + database_encryption {
+          + state = "DECRYPTED"
+        }
+
+      + default_snat_status {
+          + disabled = (known after apply)
+        }
+
+      + ip_allocation_policy {
+          + cluster_ipv4_cidr_block       = (known after apply)
+          + cluster_secondary_range_name  = "gke-network-subnet-pods"
+          + services_ipv4_cidr_block      = (known after apply)
+          + services_secondary_range_name = "gke-network-subnet-services"
+        }
+
+      + logging_config {
+          + enable_components = (known after apply)
+        }
+
+      + maintenance_policy {
+          + daily_maintenance_window {
+              + duration   = (known after apply)
+              + start_time = "05:00"
+            }
+        }
+
+      + master_auth {
+          + client_certificate     = (known after apply)
+          + client_key             = (sensitive value)
+          + cluster_ca_certificate = (known after apply)
+
+          + client_certificate_config {
+              + issue_client_certificate = false
+            }
+        }
+
+      + monitoring_config {
+          + enable_components = (known after apply)
+        }
+
+      + network_policy {
+          + enabled = false
+        }
+
+      + node_config {
+          + boot_disk_kms_key = (known after apply)
+          + disk_size_gb      = (known after apply)
+          + disk_type         = (known after apply)
+          + guest_accelerator = (known after apply)
+          + image_type        = (known after apply)
+          + labels            = (known after apply)
+          + local_ssd_count   = (known after apply)
+          + machine_type      = (known after apply)
+          + metadata          = (known after apply)
+          + min_cpu_platform  = (known after apply)
+          + node_group        = (known after apply)
+          + oauth_scopes      = (known after apply)
+          + preemptible       = (known after apply)
+          + service_account   = (known after apply)
+          + tags              = (known after apply)
+          + taint             = (known after apply)
+
+          + gcfs_config {
+              + enabled = (known after apply)
+            }
+
+          + gvnic {
+              + enabled = (known after apply)
+            }
+
+          + shielded_instance_config {
+              + enable_integrity_monitoring = (known after apply)
+              + enable_secure_boot          = (known after apply)
+            }
+
+          + workload_metadata_config {
+              + mode = (known after apply)
+            }
+        }
+
+      + node_pool {
+          + initial_node_count          = 0
+          + instance_group_urls         = (known after apply)
+          + managed_instance_group_urls = (known after apply)
+          + max_pods_per_node           = (known after apply)
+          + name                        = "default-pool"
+          + name_prefix                 = (known after apply)
+          + node_count                  = (known after apply)
+          + node_locations              = (known after apply)
+          + version                     = (known after apply)
+
+          + management {
+              + auto_repair  = (known after apply)
+              + auto_upgrade = (known after apply)
+            }
+
+          + node_config {
+              + disk_size_gb      = (known after apply)
+              + disk_type         = (known after apply)
+              + guest_accelerator = (known after apply)
+              + image_type        = "cos_containerd"
+              + labels            = (known after apply)
+              + local_ssd_count   = (known after apply)
+              + machine_type      = "e2-medium"
+              + metadata          = (known after apply)
+              + oauth_scopes      = (known after apply)
+              + preemptible       = false
+              + service_account   = (known after apply)
+              + tags              = [
+                  + "gke-gke",
+                  + "gke-gke-default-pool",
+                ]
+              + taint             = (known after apply)
+
+              + shielded_instance_config {
+                  + enable_integrity_monitoring = true
+                  + enable_secure_boot          = false
+                }
+
+              + workload_metadata_config {
+                  + mode = "GKE_METADATA"
+                }
+            }
+
+          + upgrade_settings {
+              + max_surge       = (known after apply)
+              + max_unavailable = (known after apply)
+            }
+        }
+
+      + release_channel {
+          + channel = (known after apply)
+        }
+
+      + timeouts {
+          + create = "45m"
+          + delete = "45m"
+          + update = "45m"
+        }
+
+      + vertical_pod_autoscaling {
+          + enabled = false
+        }
+
+      + workload_identity_config {
+          + workload_pool = "kubernetes-cluster-b3bb.svc.id.goog"
+        }
+    }
+
+  # module.gke.google_container_node_pool.pools["kubernetes-cluster-dev-gke-node-pool"] will be created
+  + resource "google_container_node_pool" "pools" {
+      + cluster                     = "gke"
+      + id                          = (known after apply)
+      + initial_node_count          = 3
+      + instance_group_urls         = (known after apply)
+      + location                    = "northamerica-northeast1"
+      + managed_instance_group_urls = (known after apply)
+      + max_pods_per_node           = (known after apply)
+      + name                        = "kubernetes-cluster-dev-gke-node-pool"
+      + name_prefix                 = (known after apply)
+      + node_count                  = (known after apply)
+      + node_locations              = [
+          + " northamerica-northeast1-b",
+          + " northamerica-northeast1-c",
+          + "northamerica-northeast1-a",
+        ]
+      + operation                   = (known after apply)
+      + project                     = "kubernetes-cluster-b3bb"
+      + version                     = (known after apply)
+
+      + autoscaling {
+          + max_node_count = 4
+          + min_node_count = 3
+        }
+
+      + management {
+          + auto_repair  = true
+          + auto_upgrade = true
+        }
+
+      + node_config {
+          + disk_size_gb      = 30
+          + disk_type         = "pd-standard"
+          + guest_accelerator = []
+          + image_type        = "cos_containerd"
+          + labels            = {
+              + "cluster_name" = "gke"
+              + "node_pool"    = "kubernetes-cluster-dev-gke-node-pool"
+            }
+          + local_ssd_count   = 0
+          + machine_type      = "e2-medium"
+          + metadata          = {
+              + "cluster_name"             = "gke"
+              + "disable-legacy-endpoints" = "true"
+              + "node_pool"                = "kubernetes-cluster-dev-gke-node-pool"
+            }
+          + oauth_scopes      = [
+              + "https://www.googleapis.com/auth/cloud-platform",
+            ]
+          + preemptible       = false
+          + service_account   = (known after apply)
+          + tags              = [
+              + "gke-gke",
+              + "gke-gke-kubernetes-cluster-dev-gke-node-pool",
+            ]
+          + taint             = (known after apply)
+
+          + shielded_instance_config {
+              + enable_integrity_monitoring = true
+              + enable_secure_boot          = false
+            }
+
+          + workload_metadata_config {
+              + mode = "GKE_METADATA"
+            }
+        }
+
+      + timeouts {
+          + create = "45m"
+          + delete = "45m"
+          + update = "45m"
+        }
+
+      + upgrade_settings {
+          + max_surge       = (known after apply)
+          + max_unavailable = (known after apply)
+        }
+    }
+
+  # module.gke.google_project_iam_member.cluster_service_account-log_writer[0] will be created
+  + resource "google_project_iam_member" "cluster_service_account-log_writer" {
+      + etag    = (known after apply)
+      + id      = (known after apply)
+      + member  = (known after apply)
+      + project = "kubernetes-cluster-b3bb"
+      + role    = "roles/logging.logWriter"
+    }
+
+  # module.gke.google_project_iam_member.cluster_service_account-metric_writer[0] will be created
+  + resource "google_project_iam_member" "cluster_service_account-metric_writer" {
+      + etag    = (known after apply)
+      + id      = (known after apply)
+      + member  = (known after apply)
+      + project = "kubernetes-cluster-b3bb"
+      + role    = "roles/monitoring.metricWriter"
+    }
+
+  # module.gke.google_project_iam_member.cluster_service_account-monitoring_viewer[0] will be created
+  + resource "google_project_iam_member" "cluster_service_account-monitoring_viewer" {
+      + etag    = (known after apply)
+      + id      = (known after apply)
+      + member  = (known after apply)
+      + project = "kubernetes-cluster-b3bb"
+      + role    = "roles/monitoring.viewer"
+    }
+
+  # module.gke.google_project_iam_member.cluster_service_account-resourceMetadata-writer[0] will be created
+  + resource "google_project_iam_member" "cluster_service_account-resourceMetadata-writer" {
+      + etag    = (known after apply)
+      + id      = (known after apply)
+      + member  = (known after apply)
+      + project = "kubernetes-cluster-b3bb"
+      + role    = "roles/stackdriver.resourceMetadata.writer"
+    }
+
+  # module.gke.google_service_account.cluster_service_account[0] will be created
+  + resource "google_service_account" "cluster_service_account" {
+      + account_id   = (known after apply)
+      + disabled     = false
+      + display_name = "Terraform-managed service account for cluster gke"
+      + email        = (known after apply)
+      + id           = (known after apply)
+      + name         = (known after apply)
+      + project      = "kubernetes-cluster-b3bb"
+      + unique_id    = (known after apply)
+    }
+
+  # module.gke.random_shuffle.available_zones will be created
+  + resource "random_shuffle" "available_zones" {
+      + id           = (known after apply)
+      + input        = (known after apply)
+      + result       = (known after apply)
+      + result_count = 3
+    }
+
+  # module.gke.random_string.cluster_service_account_suffix will be created
+  + resource "random_string" "cluster_service_account_suffix" {
+      + id          = (known after apply)
+      + length      = 4
+      + lower       = true
+      + min_lower   = 0
+      + min_numeric = 0
+      + min_special = 0
+      + min_upper   = 0
+      + number      = true
+      + result      = (known after apply)
+      + special     = false
+      + upper       = false
+    }
+
+  # module.project_config.google_billing_budget.budget[0] will be created
+  + resource "google_billing_budget" "budget" {
+      + billing_account = (sensitive)
+      + display_name    = "Budget For All Projects"
+      + id              = (known after apply)
+      + name            = (known after apply)
+
+      + amount {
+          + specified_amount {
+              + currency_code = (known after apply)
+              + units         = "20"
+            }
+        }
+
+      + budget_filter {
+          + credit_types           = (known after apply)
+          + credit_types_treatment = "EXCLUDE_ALL_CREDITS"
+          + labels                 = (known after apply)
+          + services               = [
+              + "services/6F81-5844-456A",
+              + "services/CCD8-9BF1-090E",
+              + "services/A1E8-BE35-7EBC",
+              + "services/9186-F79E-3871",
+              + "services/36A9-155B-23F0",
+              + "services/149C-F9EC-3994",
+              + "services/CD87-46A2-EE79",
+              + "services/3DAD-B96D-BE09",
+              + "services/E505-1604-58F8",
+            ]
+          + subaccounts            = (known after apply)
+        }
+
+      + threshold_rules {
+          + spend_basis       = "CURRENT_SPEND"
+          + threshold_percent = 0.7
+        }
+      + threshold_rules {
+          + spend_basis       = "CURRENT_SPEND"
+          + threshold_percent = 0.8
+        }
+      + threshold_rules {
+          + spend_basis       = "CURRENT_SPEND"
+          + threshold_percent = 0.9
+        }
+      + threshold_rules {
+          + spend_basis       = "CURRENT_SPEND"
+          + threshold_percent = 1
+        }
+    }
+
+  # module.project_config.google_service_usage_consumer_quota_override.override["compute.googleapis.com-compute.googleapis.com/regional_in_use_addresses"] will be created
+  + resource "google_service_usage_consumer_quota_override" "override" {
+      + force          = true
+      + id             = (known after apply)
+      + limit          = "%252Fproject%252Fregion"
+      + metric         = "compute.googleapis.com%2Fregional_in_use_addresses"
+      + name           = (known after apply)
+      + override_value = "18"
+      + project        = "kubernetes-cluster-b3bb"
+      + service        = "compute.googleapis.com"
+    }
+
+  # module.vpc.module.firewall_rules.google_compute_firewall.rules["allow-ssh-ingress"] will be created
+  + resource "google_compute_firewall" "rules" {
+      + creation_timestamp = (known after apply)
+      + destination_ranges = (known after apply)
+      + direction          = "INGRESS"
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "allow-ssh-ingress"
+      + network            = "gke-network"
+      + priority           = 1000
+      + project            = "kubernetes-cluster-b3bb"
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "0.0.0.0/0",
+        ]
+
+      + allow {
+          + ports    = [
+              + "22",
+            ]
+          + protocol = "tcp"
+        }
+
+      + log_config {
+          + metadata = "INCLUDE_ALL_METADATA"
+        }
+    }
+
+  # module.vpc.module.firewall_rules.google_compute_firewall.rules["deny-udp-egress"] will be created
+  + resource "google_compute_firewall" "rules" {
+      + creation_timestamp = (known after apply)
+      + destination_ranges = (known after apply)
+      + direction          = "INGRESS"
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "deny-udp-egress"
+      + network            = "gke-network"
+      + priority           = 1000
+      + project            = "kubernetes-cluster-b3bb"
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "0.0.0.0/0",
+        ]
+
+      + deny {
+          + ports    = []
+          + protocol = "udp"
+        }
+
+      + log_config {
+          + metadata = "INCLUDE_ALL_METADATA"
+        }
+    }
+
+  # module.vpc.module.routes.google_compute_route.route["egress-internet-kubernetes-network"] will be created
+  + resource "google_compute_route" "route" {
+      + description            = "route through  IGW to access internet"
+      + dest_range             = "0.0.0.0/0"
+      + id                     = (known after apply)
+      + name                   = "egress-internet-kubernetes-network"
+      + network                = "gke-network"
+      + next_hop_gateway       = "default-internet-gateway"
+      + next_hop_instance_zone = (known after apply)
+      + next_hop_ip            = (known after apply)
+      + next_hop_network       = (known after apply)
+      + priority               = 1000
+      + project                = "kubernetes-cluster-b3bb"
+      + self_link              = (known after apply)
+      + tags                   = [
+          + "egress-gke",
+        ]
+    }
+
+  # module.vpc.module.subnets.google_compute_subnetwork.subnetwork["northamerica-northeast1/gke-network-subnet-nodes"] will be created
+  + resource "google_compute_subnetwork" "subnetwork" {
+      + creation_timestamp         = (known after apply)
+      + description                = "this subnet for GKE Cluster masters/nodes"
+      + external_ipv6_prefix       = (known after apply)
+      + fingerprint                = (known after apply)
+      + gateway_address            = (known after apply)
+      + id                         = (known after apply)
+      + ip_cidr_range              = "10.2.0.0/16"
+      + ipv6_cidr_range            = (known after apply)
+      + name                       = "gke-network-subnet-nodes"
+      + network                    = "gke-network"
+      + private_ip_google_access   = true
+      + private_ipv6_google_access = (known after apply)
+      + project                    = "kubernetes-cluster-b3bb"
+      + purpose                    = (known after apply)
+      + region                     = "northamerica-northeast1"
+      + secondary_ip_range         = [
+          + {
+              + ip_cidr_range = "10.2.0.0/16"
+              + range_name    = "gke-network-subnet-pods"
+            },
+          + {
+              + ip_cidr_range = "10.3.0.0/24"
+              + range_name    = "gke-network-subnet-services"
+            },
+        ]
+      + self_link                  = (known after apply)
+      + stack_type                 = (known after apply)
+
+      + log_config {
+          + aggregation_interval = "INTERVAL_10_MIN"
+          + filter_expr          = "true"
+          + flow_sampling        = 0.7
+          + metadata             = "INCLUDE_ALL_METADATA"
+        }
+    }
+
+  # module.vpc.module.vpc.google_compute_network.network will be created
+  + resource "google_compute_network" "network" {
+      + auto_create_subnetworks         = false
+      + delete_default_routes_on_create = true
+      + gateway_ipv4                    = (known after apply)
+      + id                              = (known after apply)
+      + mtu                             = 0
+      + name                            = "gke-network"
+      + project                         = "kubernetes-cluster-b3bb"
+      + routing_mode                    = "GLOBAL"
+      + self_link                       = (known after apply)
+    }
+
+  # module.gke.module.gcloud_delete_default_kube_dns_configmap.module.gcloud_kubectl.null_resource.module_depends_on[0] will be created
+  + resource "null_resource" "module_depends_on" {
+      + id       = (known after apply)
+      + triggers = {
+          + "value" = "2"
+        }
+    }
+
+Plan: 17 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + ca_certificate      = (sensitive value)
+  + kubernetes_endpoint = (sensitive value)
+  + network_self_link   = (known after apply)
+  + service_account     = (known after apply)
+  + subnets             = [
+      + (known after apply),
+    ]
+  + subnets_ids         = [
+      + (known after apply),
+    ]
+  + subnets_self_links  = [
+      + (known after apply),
+    ]
+  + vpc                 = {
+      + network                  = {
+          + network           = {
+              + auto_create_subnetworks         = false
+              + delete_default_routes_on_create = true
+              + description                     = ""
+              + gateway_ipv4                    = (known after apply)
+              + id                              = (known after apply)
+              + mtu                             = 0
+              + name                            = "gke-network"
+              + project                         = "kubernetes-cluster-b3bb"
+              + routing_mode                    = "GLOBAL"
+              + self_link                       = (known after apply)
+              + timeouts                        = null
+            }
+          + network_id        = (known after apply)
+          + network_name      = "gke-network"
+          + network_self_link = (known after apply)
+          + project_id        = "kubernetes-cluster-b3bb"
+        }
+      + network_id               = (known after apply)
+      + network_name             = "gke-network"
+      + network_self_link        = (known after apply)
+      + project_id               = "kubernetes-cluster-b3bb"
+      + route_names              = [
+          + "egress-internet-kubernetes-network",
+        ]
+      + subnets                  = {
+          + northamerica-northeast1/gke-network-subnet-nodes = {
+              + creation_timestamp         = (known after apply)
+              + description                = "this subnet for GKE Cluster masters/nodes"
+              + external_ipv6_prefix       = (known after apply)
+              + fingerprint                = (known after apply)
+              + gateway_address            = (known after apply)
+              + id                         = (known after apply)
+              + ip_cidr_range              = "10.2.0.0/16"
+              + ipv6_access_type           = null
+              + ipv6_cidr_range            = (known after apply)
+              + log_config                 = [
+                  + {
+                      + aggregation_interval = "INTERVAL_10_MIN"
+                      + filter_expr          = "true"
+                      + flow_sampling        = 0.7
+                      + metadata             = "INCLUDE_ALL_METADATA"
+                      + metadata_fields      = null
+                    },
+                ]
+              + name                       = "gke-network-subnet-nodes"
+              + network                    = "gke-network"
+              + private_ip_google_access   = true
+              + private_ipv6_google_access = (known after apply)
+              + project                    = "kubernetes-cluster-b3bb"
+              + purpose                    = (known after apply)
+              + region                     = "northamerica-northeast1"
+              + role                       = null
+              + secondary_ip_range         = [
+                  + {
+                      + ip_cidr_range = "10.2.0.0/16"
+                      + range_name    = "gke-network-subnet-pods"
+                    },
+                  + {
+                      + ip_cidr_range = "10.3.0.0/24"
+                      + range_name    = "gke-network-subnet-services"
+                    },
+                ]
+              + self_link                  = (known after apply)
+              + stack_type                 = (known after apply)
+              + timeouts                   = null
+            }
+        }
+      + subnets_flow_logs        = [
+          + true,
+        ]
+      + subnets_ids              = [
+          + (known after apply),
+        ]
+      + subnets_ips              = [
+          + "10.2.0.0/16",
+        ]
+      + subnets_names            = [
+          + "gke-network-subnet-nodes",
+        ]
+      + subnets_private_access   = [
+          + true,
+        ]
+      + subnets_regions          = [
+          + "northamerica-northeast1",
+        ]
+      + subnets_secondary_ranges = [
+          + [
+              + {
+                  + ip_cidr_range = "10.2.0.0/16"
+                  + range_name    = "gke-network-subnet-pods"
+                },
+              + {
+                  + ip_cidr_range = "10.3.0.0/24"
+                  + range_name    = "gke-network-subnet-services"
+                },
+            ],
+        ]
+      + subnets_self_links       = [
+          + (known after apply),
+        ]
+    }
+
+module.project_config.google_service_usage_consumer_quota_override.override["compute.googleapis.com-compute.googleapis.com/regional_in_use_addresses"]: Creating...
+module.project_config.google_billing_budget.budget[0]: Creating...
+╷
+│ Error: Error creating Budget: googleapi: Error 403: Your application has authenticated using end user credentials from the Google Cloud SDK or Google Cloud Shell which are not supported by the billingbudgets.googleapis.com. We recommend configuring the billing/quota_project setting in gcloud or using a service account through the auth/impersonate_service_account setting. For more information about service accounts and how to use them in your application, see https://cloud.google.com/docs/authentication/. If you are getting this error with curl or similar tools, you may need to specify 'X-Goog-User-Project' HTTP header for quota and billing purposes. For more information regarding 'X-Goog-User-Project' header, please check https://cloud.google.com/apis/docs/system-parameters.
+│ Details:
+│ [
+│   {
+│     "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+│     "domain": "googleapis.com",
+│     "metadata": {
+│       "consumer": "projects/32555940559",
+│       "service": "billingbudgets.googleapis.com"
+│     },
+│     "reason": "SERVICE_DISABLED"
+│   }
+│ ]
+│ 
+│   with module.project_config.google_billing_budget.budget[0],
+│   on project_config/main.tf line 53, in resource "google_billing_budget" "budget":
+│   53: resource "google_billing_budget" "budget" {
+│ 
+╵
+╷
+│ Error: Error creating ConsumerQuotaOverride: googleapi: Error 400: The consumer override value can only be set between 0 to 8.
+│ Help Token: Ae-hA1P0ObF4wlmXBlR-sniEo9AUbu0ceZb5JrAfPsFe61LiIxaRWBJ2Y9RXW3A4KlNvYior43COSHjNQeDUhDL9_9rl_bRFS2Bf9CmwqCzyH6AF
+│ Details:
+│ [
+│   {
+│     "@type": "type.googleapis.com/google.rpc.PreconditionFailure",
+│     "violations": [
+│       {
+│         "subject": "?error_code=101038\u0026max=8",
+│         "type": "googleapis.com"
+│       }
+│     ]
+│   },
+│   {
+│     "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+│     "domain": "serviceusage.googleapis.com",
+│     "metadata": {
+│       "max": "8"
+│     },
+│     "reason": "COMMON_QUOTA_CONSUMER_OVERRIDE_TOO_HIGH"
+│   }
+│ ]
+│ 
+│   with module.project_config.google_service_usage_consumer_quota_override.override["compute.googleapis.com-compute.googleapis.com/regional_in_use_addresses"],
+│   on project_config/main.tf line 88, in resource "google_service_usage_consumer_quota_override" "override":
+│   88: resource "google_service_usage_consumer_quota_override" "override" {
+│ 
+╵

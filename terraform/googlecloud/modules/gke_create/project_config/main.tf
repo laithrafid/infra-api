@@ -37,14 +37,14 @@ data "google_pubsub_topic" "budget" {
   name       = "budget-topic-${var.project_name}"
   depends_on = [google_pubsub_topic.budget]
 }
-data "google_monitoring_notification_channel" "sms" {
-  display_name = "SMS Channel"
-  depends_on   = [google_monitoring_notification_channel.sms]
-}
-data "google_monitoring_notification_channel" "email" {
-  display_name = "Email Channel"
-  depends_on   = [google_monitoring_notification_channel.email]
-}
+# data "google_monitoring_notification_channel" "sms" {
+#   display_name = "SMS Channel"
+#   depends_on   = [google_monitoring_notification_channel.sms]
+# }
+# data "google_monitoring_notification_channel" "email" {
+#   display_name = "Email Channel"
+#   depends_on   = [google_monitoring_notification_channel.email]
+# }
 data "google_project" "project" {
   count      = length(var.projects)
   project_id = element(var.projects, count.index)
@@ -52,7 +52,6 @@ data "google_project" "project" {
 }
 resource "google_billing_budget" "budget" {
   count = var.create_budget ? 1 : 0
-
   billing_account = var.billing_account
   display_name    = local.display_name
 
@@ -81,7 +80,7 @@ resource "google_billing_budget" "budget" {
     for_each = local.all_updates_rule
     content {
       pubsub_topic                     = var.alert_pubsub_topic == null ? data.google_pubsub_topic.budget.id : var.alert_pubsub_topic
-      monitoring_notification_channels = var.monitoring_notification_channels == null ? [data.google_monitoring_notification_channel.email.name, data.google_monitoring_notification_channel.sms.name] : var.monitoring_notification_channels
+      monitoring_notification_channels = var.monitoring_notification_channels == null ? [google_monitoring_notification_channel.email.name, google_monitoring_notification_channel.sms.name] : var.monitoring_notification_channels
     }
   }
 }
