@@ -67,7 +67,15 @@ variable "consumer_quotas" {
 }
 variable "subnets" {
   description = "The list of subnets being created"
-  type        = list(map(string))
+  type        =  list(object({
+    subnet_name = string
+    subnet_ip = string
+    subnet_region = string
+    subnet_flow_logs = string
+    subnet_flow_logs_interval = string
+    subnet_flow_logs_sampling = string
+    subnet_flow_logs_metadata = string
+  }))
   default = [ {
             subnet_name               = "gke-network-subnet-nodes"
             subnet_ip                 = "10.1.0.0/16"
@@ -87,11 +95,11 @@ variable "secondary_ranges" {
     )
     default = {
       "gke-network-subnet-nodes" = [ {
-        ip_cidr_range = "10.2.240.0/20"
+        ip_cidr_range = "5.0.0.0/16"
         range_name = "gke-network-subnet-pods"
       },
       {
-        ip_cidr_range = "10.1.240.0/20"
+        ip_cidr_range = "5.1.0.0/16"
         range_name = "gke-network-subnet-services"
       }]
     }
@@ -124,7 +132,15 @@ variable "firewall_rules" {
 }
 variable "routes" {
   description = "List of routes being created in this VPC"
-  type        = list(map(string))
+  type        = list(object({
+   name                   = string
+   description            = string
+   destination_range      = string
+   tags                   = string
+   next_hop_instance      = string
+   next_hop_internet      = string
+   priority               = string 
+  }))
   default     = []
 }
 variable "routing_mode" {
