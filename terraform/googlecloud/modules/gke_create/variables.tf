@@ -68,6 +68,15 @@ variable "consumer_quotas" {
 variable "subnets" {
   description = "The list of subnets being created"
   type        = list(map(string))
+  default = [ {
+            subnet_name               = "gke-network-subnet-nodes"
+            subnet_ip                 = "10.1.0.0/16"
+            subnet_region             = "example-region"
+            subnet_flow_logs          = "true"
+            subnet_flow_logs_interval = "INTERVAL_10_MIN"
+            subnet_flow_logs_sampling = 0.7
+            subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
+        }, ]
 }
 variable "secondary_ranges" {
   description = "Secondary ranges that will be used in some of the subnets"
@@ -76,6 +85,16 @@ variable "secondary_ranges" {
     ip_cidr_range = string })
     )
     )
+    default = {
+      "gke-network-subnet-nodes" = [ {
+        ip_cidr_range = "10.2.240.0/20"
+        range_name = "gke-network-subnet-pods"
+      },
+      {
+        ip_cidr_range = "10.1.240.0/20"
+        range_name = "gke-network-subnet-services"
+      }]
+    }
 }
 variable "firewall_rules" {
   default = []
@@ -139,16 +158,16 @@ variable "gke_node_locations" {
   default     = "northamerica-northeast1-a, northamerica-northeast1-b, northamerica-northeast1-c"
 }
 variable "auto_create_subnetworks" {
-  type    = string
-  default = "false"
+  type    = bool
+  default = false
 }
 variable "delete_default_internet_gateway_routes" {
-  type    = string
-  default = "true"
+  type    = bool
+  default = true
 }
 variable "shared_vpc_host" {
-  type    = string
-  default = "false"
+  type    = bool
+  default = false
 }
 variable "worker_size" {
   type        = string
@@ -188,18 +207,19 @@ variable "node_image_type" {
   type        = string
   nullable    = true
   description = "(Optional) The default image type used by NAP once a new node pool is being created. Please note that according to the official documentation the value must be one of the [COS_CONTAINERD, COS, UBUNTU_CONTAINERD, UBUNTU]."
+  default = "COS_CONTAINERD"
 }
 # cos_containerd: Container-Optimized OS with containerd.
 # cos: Container-Optimized OS with Docker
 # ubuntu_containerd: Ubuntu with containerd
 # ubuntu: Ubuntu with Docker.
 variable "auto_repair" {
-  type     = string
+  type     = bool
   nullable = true
 
 }
 variable "auto_upgrade" {
-  type        = string
+  type        = bool
   nullable    = true
   description = "auto updgrade nodes os"
 }
