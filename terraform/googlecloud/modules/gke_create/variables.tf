@@ -67,24 +67,24 @@ variable "consumer_quotas" {
 }
 variable "subnets" {
   description = "The list of subnets being created"
-  type        =  list(object({
-    subnet_name = string
-    subnet_ip = string
-    subnet_region = string
-    subnet_flow_logs = string
+  type = list(object({
+    subnet_name               = string
+    subnet_ip                 = string
+    subnet_region             = string
+    subnet_flow_logs          = string
     subnet_flow_logs_interval = string
     subnet_flow_logs_sampling = string
     subnet_flow_logs_metadata = string
   }))
-  default = [ {
-            subnet_name               = "gke-network-subnet-nodes"
-            subnet_ip                 = "10.1.0.0/16"
-            subnet_region             = "example-region"
-            subnet_flow_logs          = "true"
-            subnet_flow_logs_interval = "INTERVAL_10_MIN"
-            subnet_flow_logs_sampling = 0.7
-            subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
-        }, ]
+  default = [{
+    subnet_name               = "gke-network-subnet-nodes"
+    subnet_ip                 = "10.1.0.0/16"
+    subnet_region             = "example-region"
+    subnet_flow_logs          = "true"
+    subnet_flow_logs_interval = "INTERVAL_10_MIN"
+    subnet_flow_logs_sampling = 0.7
+    subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
+  }, ]
 }
 variable "secondary_ranges" {
   description = "Secondary ranges that will be used in some of the subnets"
@@ -92,20 +92,20 @@ variable "secondary_ranges" {
     range_name = string,
     ip_cidr_range = string })
     )
-    )
-    default = {
-      "gke-network-subnet-nodes" = [ {
-        ip_cidr_range = "5.0.0.0/16"
-        range_name = "gke-network-subnet-pods"
+  )
+  default = {
+    "gke-network-subnet-nodes" = [{
+      ip_cidr_range = "5.0.0.0/16"
+      range_name    = "gke-network-subnet-pods"
       },
       {
         ip_cidr_range = "5.1.0.0/16"
-        range_name = "gke-network-subnet-services"
-      }]
-    }
+        range_name    = "gke-network-subnet-services"
+    }]
+  }
 }
 variable "firewall_rules" {
-  default = []
+  default     = []
   description = "List of firewall rules"
   type = list(object({
     name                    = string
@@ -132,15 +132,12 @@ variable "firewall_rules" {
 }
 variable "routes" {
   description = "List of routes being created in this VPC"
-  type        = list(object({
-   name                   = string
-   description            = string
-   destination_range      = string
-   tags                   = string
-   next_hop_instance      = string
-   next_hop_internet      = string
-   priority               = string 
-  }))
+  type = list(map(string))
+  default = []
+}
+variable "bastion_members" {
+  type        = list(string)
+  description = "members of List of users, groups, SAs who have access to bastion node and gke cluster"
   default     = []
 }
 variable "routing_mode" {
@@ -223,7 +220,7 @@ variable "node_image_type" {
   type        = string
   nullable    = true
   description = "(Optional) The default image type used by NAP once a new node pool is being created. Please note that according to the official documentation the value must be one of the [COS_CONTAINERD, COS, UBUNTU_CONTAINERD, UBUNTU]."
-  default = "COS_CONTAINERD"
+  default     = "COS_CONTAINERD"
 }
 # cos_containerd: Container-Optimized OS with containerd.
 # cos: Container-Optimized OS with Docker

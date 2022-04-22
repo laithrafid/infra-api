@@ -5,14 +5,22 @@ resource "random_id" "random_project_id_suffix" {
 locals {
   project         = "${var.project_name}-${random_id.random_project_id_suffix.hex}"
   project_id      = local.project
-  cluster_name    = "gke-${local.project_id}}"
+  cluster_name    = "gke-${local.project_id}"
   network_name    = "gke-network"
   nodes-subnet    = "gke-network-subnet-nodes"
   pods-subnet     = "gke-network-subnet-pods"
   services-subnet = "gke-network-subnet-services"
   nodepool_name   = "${var.project_name}-${var.environment}-${var.cluster_name}-node-pool"
+  bastion_name    = format("%s-bastion", var.cluster_name)
+  bastion_zone    = format("%s-a", var.region)
 }
 
+data "template_file" "startup_script" {
+  template = <<-EOF
+  sudo apt-get update -y
+  sudo apt-get install -y tinyproxy
+  EOF
+}
 
 resource "google_folder" "folder" {
   display_name = var.project_folder
@@ -36,23 +44,23 @@ module "project_create" {
   ]
 }
 
-module "project_config" {
-  source                      = "./project_config/"
-  amount                      = var.budget_amount
-  billing_account             = var.billing_account
-  create_budget               = true
-  credit_types_treatment      = var.budget_credit_types_treatment
-  notification_channels_email = var.notification_channels.email
-  notification_channels_sms   = var.notification_channels.number
-  project_id                  = module.project_create.project_id
-  project_name                = var.project_name
-  services                    = var.budget_services
-  alert_spent_percents        = var.budget_alert_spent_percents
-  alert_spend_basis           = var.budget_alert_spend_basis
-  depends_on = [
-    module.project_create
-  ]
-}
+# module "project_config" {
+#   source                      = "./project_config/"
+#   amount                      = var.budget_amount
+#   billing_account             = var.billing_account
+#   create_budget               = true
+#   credit_types_treatment      = var.budget_credit_types_treatment
+#   notification_channels_email = var.notification_channels.email
+#   notification_channels_sms   = var.notification_channels.number
+#   project_id                  = module.project_create.project_id
+#   project_name                = var.project_name
+#   services                    = var.budget_services
+#   alert_spent_percents        = var.budget_alert_spent_percents
+#   alert_spend_basis           = var.budget_alert_spend_basis
+#   depends_on = [
+#     module.project_create
+#   ]
+# }
 module "vpc" {
   source                                 = "terraform-google-modules/network/google"
   version                                = ">= 5.0.0"
@@ -71,6 +79,7 @@ module "vpc" {
     module.project_create
   ]
 }
+
 module "gke" {
   source                     = "terraform-google-modules/kubernetes-engine/google"
   version                    = "20.0.0"
@@ -84,8 +93,8 @@ module "gke" {
   zones                      = var.cluster_zones
   network                    = module.vpc.network_name
   subnetwork                 = module.vpc.subnets_names[0]
-  ip_range_pods              = local.pods-subnet
-  ip_range_services          = local.services-subnet
+  ip_range_pods              = module.vpc.subnets_secondary_ranges[0].*.range_name[0]
+  ip_range_services          = module.vpc.subnets_secondary_ranges[0].*.range_name[1]
   http_load_balancing        = var.http_load_balancing
   remove_default_node_pool   = var.remove_default_node_pool
   network_policy             = var.network_policy
