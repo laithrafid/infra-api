@@ -18,7 +18,7 @@ variable "region" {
   description = "region of cluster"
   default = "ca-central-1"
 }
-variable "kops-state-s3" {
+variable "kops_state" {
   type = string
   description = "bucket where kops state files will be saved"
   default = "kopsdev-state"
