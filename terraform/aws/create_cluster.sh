@@ -46,10 +46,10 @@ stage=${STAGE}
 region=${REGION}
 kops_state=${KOPS_STATE_S3}
 EOF
-run_create_module()
-create_ssh_key()
-create_terraform_manifest()
-deploying_cluster_to_aws()
+run_create_module
+create_ssh_key
+create_terraform_manifest
+deploying_cluster_to_aws
         ;;
         stg)
          cat << EOF > stg.tfvars
@@ -59,10 +59,10 @@ stage=${STAGE}
 region=${REGION}
 kops_state=${KOPS_STATE_S3}
 EOF 
-run_create_module()
-create_ssh_key()
-create_terraform_manifest()
-deploying_cluster_to_aws()
+run_create_module
+create_ssh_key
+create_terraform_manifest
+deploying_cluster_to_aws
         ;;
         prd)
           cat << EOF > stg.tfvars
@@ -72,10 +72,10 @@ stage=${STAGE}
 region=${REGION}
 kops_state=${KOPS_STATE_S3}
 EOF 
-run_create_module()
-create_ssh_key()
-create_terraform_manifest()
-deploying_cluster_to_aws()
+run_create_module
+create_ssh_key
+create_terraform_manifest
+deploying_cluster_to_aws
 
         ;;
         *)
