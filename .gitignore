@@ -24,7 +24,7 @@
 */*.tfvars
 terraform/digitalocean/terraform.tfvars
 terraform/googlecloud/terraform.tfvars
-terraform/googlecloud/terraform.tfvars
-terraform/googlecloud/terraform.tfvars
 terraform/googlecloud/modules/gke_create/terraform.tfvars
 terraform/googlecloud/modules/gke_create/terraform.tfstate.backup
+*/*/*/*/dev.tfvars
+terraform/aws/modules/create/dev.tfvars

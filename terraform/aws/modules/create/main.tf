@@ -41,7 +41,7 @@ resource "aws_iam_user_policy_attachment" "kops_usr_pol_7" {
 
 
 resource "aws_s3_bucket" "kops_config_bucket" {
-  bucket = var.kops-state-s3
+  bucket = var.kops_state
   acl    = "private"
 
   versioning {

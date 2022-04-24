@@ -33,145 +33,107 @@ NAME="api.${DNS_ZONE}"
 STAGE="$1"
 KOPS_STATE_S3="kops-${STAGE}"
 
-cd $PWD/modules/create/
-
-# Logic
-
-case ${STAGE} in
-        dev)
-          cat << EOF > dev.tfvars
-access_key_id=${AWS_ACCESS_KEY_ID}
-secret_access_key=${AWS_SECRET_ACCESS_KEY}
-stage=${STAGE}
-region=${REGION}
-kops_state=${KOPS_STATE_S3}
-EOF
-run_create_module
-create_ssh_key
-create_terraform_manifest
-deploying_cluster_to_aws
-        ;;
-        stg)
-         cat << EOF > stg.tfvars
-access_key_id=${AWS_ACCESS_KEY_ID}
-secret_access_key=${AWS_SECRET_ACCESS_KEY}
-stage=${STAGE}
-region=${REGION}
-kops_state=${KOPS_STATE_S3}
-EOF 
-run_create_module
-create_ssh_key
-create_terraform_manifest
-deploying_cluster_to_aws
-        ;;
-        prd)
-          cat << EOF > stg.tfvars
-access_key_id=${AWS_ACCESS_KEY_ID}
-secret_access_key=${AWS_SECRET_ACCESS_KEY}
-stage=${STAGE}
-region=${REGION}
-kops_state=${KOPS_STATE_S3}
-EOF 
-run_create_module
-create_ssh_key
-create_terraform_manifest
-deploying_cluster_to_aws
-
-        ;;
-        *)
-            echo $"Usage: $0 {dev|stg|prd}"
-            exit 1
-esac
-
-
-
+cd $PWD/modules/
 
 ### Functions 
 
-run_create_module(){
-echo -e "${BLUE}==== Applying Pre-requisite Terraform ====${NC}"
-terraform init
-terraform plan 
-terraform apply -auto-approve -input=false --var-file="$STAGE".tfvars
-echo "AWS_KOPS_ACCESS_KEY_ID=$(terraform state show aws_iam_access_key.kops | grep "id" | cut -d= -f2 | awk '{$1=$1};1')" >> "${STAGE}".tfvars
-echo "AWS_KOPS_SECRET_ACCESS_KEY=$(terraform state show aws_iam_access_key.kops | grep "secret" | cut -d= -f2 | awk '{$1=$1};1')" >> "${STAGE}".tfvars
-echo -e "${GREEN}==== Done Deploying Pre-requisite Terraform ====${NC}"
-echo ''
-}
-
-
-create_ssh_key(){
-echo -e "${BLUE}==== Creating Keypair ====${NC}"
-ssh-keygen -A -t rsa -C ${NAME} -f ${NAME}.pem
-PUBKEY=$(pwd)/modules/create/${NANE}.pem.pub
-aws ec2 import-key-pair --key-name ${NAME} --public-key-material file://${PUBKEY}
-echo -e "${GREEN}==== Done Creating Keypair ====${NC}"
-echo ''
-}
-
-create_terraform_manifest(){
-echo -e "${BLUE}==== Creating Cluster Terraform ====${NC}"
+create_tfvars(){
+cd create/
+cat << EOF > "$1".tfvars
+    access_key_id="${AWS_ACCESS_KEY_ID}"
+    secret_access_key="${AWS_SECRET_ACCESS_KEY}"
+    stage="${STAGE}"
+    region="${REGION}"
+    kops_state="${KOPS_STATE_S3}"
+EOF
 cd ../
-mkdir -p cluster
-kops create cluster --cloud aws --state=s3://${KOPS_STATE_S3} --node-count 3 --zones ${REGION}a,${REGION}b,${REGION}d \
---master-zones ${REGION}a,${REGION}b,${REGION}d --dns-zone ${DNS_ZONE} --node-size t3.medium --master-size t3.medium \
---topology private --networking calico --ssh-public-key=${PUBKEY} --bastion --authorization RBAC --out=cluster --target=terraform ${NAME}
-
-echo -e "${GREEN}==== Done Creating Cluster Terraform ====${NC}"
-echo ''
 }
-
+run_create_module(){
+  echo -e "${BLUE}==== Applying Pre-requisite Terraform ====${NC}"
+  cd create/
+  terraform init
+  terraform plan --var-file="$1".tfvars
+  terraform apply -auto-approve -input=false --var-file="$1".tfvars
+  echo "AWS_KOPS_ACCESS_KEY_ID=$(terraform state show aws_iam_access_key.kops | grep "id" | cut -d= -f2 | awk '{$1=$1};1')" >> "$1".tfvars
+  echo "AWS_KOPS_SECRET_ACCESS_KEY=$(terraform state show aws_iam_access_key.kops | grep "secret" | cut -d= -f2 | awk '{$1=$1};1')" >> "$1".tfvars
+  cd ../
+  echo -e "${GREEN}==== Done Deploying Pre-requisite Terraform ====${NC}"
+  echo ''
+}
+create_ssh_key(){
+  echo -e "${BLUE}==== Creating Keypair ====${NC}"
+  cd cluster/
+  ssh-keygen -A -t rsa -C ${NAME} -f ${NAME}.pem
+  PUBKEY=$(pwd)/modules/create/${NANE}.pem.pub
+  aws ec2 import-key-pair --key-name ${NAME} --public-key-material file://${PUBKEY}
+  cd ../
+  echo -e "${GREEN}==== Done Creating Keypair ====${NC}"
+  echo ''
+}
+create_terraform_manifest(){
+  echo -e "${BLUE}==== Creating Cluster Terraform ====${NC}"
+  cd cluster/
+  kops create cluster --cloud aws --state=s3://${KOPS_STATE_S3} --node-count 3 \
+  --zones ${REGION}a,${REGION}b,${REGION}d \
+  --master-zones ${REGION}a,${REGION}b,${REGION}d \
+  --dns-zone ${DNS_ZONE} --node-size t3.medium \
+  --master-size t3.medium --topology private \
+  --networking calico --ssh-public-key=${PUBKEY} \
+  --bastion --authorization RBAC --out=cluster --target=terraform ${NAME}
+  cd ../
+  echo -e "${GREEN}==== Done Creating Cluster Terraform ====${NC}"
+  echo ''
+}
 deploying_cluster_to_aws(){
-echo -e "${BLUE}==== Deploying Cluster Terraform ====${NC}"
-cd cluster
-cat << EOF > providers.tf
-terraform {
-  cloud {
-     organization = "bayt"
-     hostname = "app.terraform.io"
-     workspaces {
-      name = "infra-api-aws"
-    }
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-      version = "4.11.0"
-    }
-  }
+  echo -e "${BLUE}==== Deploying Cluster Terraform ====${NC}"
+  cd cluster  
+  terraform init
+  terraform plan --var-file=../create/"$1".tfvars
+  terraform apply -auto-approve -input=false  --var-file=../create/"$1".tfvars
+  cd ../
+  echo -e "${GREEN}==== Done Deploying Cluster Terraform ====${NC}"
 }
-provider "aws" {
-  region      = var.region
-  access_key  = var.AWS_KOPS_ACCESS_KEY_ID
-  secret_key  = var.KOPS_SECRET_ACCESS_KEY
-}
-}
-EOF
-cat << EOF > variables.tf
- variable "AWS_KOPS_ACCESS_KEY_ID" {
-  type = string
-  description = "which stage is this cluster should run vaiables from var file .tfvars"
-  sensitive = true 
-}
- variable "KOPS_SECRET_ACCESS_KEY" {
-  type = string
-  description = "which stage is this cluster should run vaiables from var file .tfvars"
-  sensitive = true 
-}
-variable "region" {
-  type = string
-  description = "region of cluster"
-  default = "ca-central-1"
-}
-EOF
-terraform init
-terraform plan
-terraform apply -auto-approve -input=false  --var-file=../create/"${STAGE}".tfvars
-echo -e "${GREEN}==== Done Deploying Cluster Terraform ====${NC}"
-echo ''
+clean_up(){
+  echo -e "${RED}==== Destroying Kubernetes Cluster ====${NC}"
+  cd cluster/ 
+  terraform destroy --var-file=../create/"$1".tfvars
+  rm -rf .terraform*
+  echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
+  cd ../create
+  echo -e "${RED}==== Destroying Pre-requisite Terraform Cluster ====${NC}"
+  terraform destroy --var-file="$1".tfvars
+  rm -rf "$1".tfvars .terraform*
+  cd ../
+  echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
 }
 
-
-
-
-
+# Logic
+case $STAGE in
+  dev)
+    create_tfvars $STAGE
+    run_create_module $STAGE
+    create_ssh_key
+    create_terraform_manifest
+    deploying_cluster_to_aws $STAGE
+    ;;
+  stg)
+    create_tfvars $STAGE
+    run_create_module $STAGE
+    create_ssh_key
+    create_terraform_manifest
+    deploying_cluster_to_aws $STAGE
+    ;;
+  prd)
+    create_tfvars $STAGE
+    run_create_module $STAGE
+    create_ssh_key
+    create_terraform_manifest
+    deploying_cluster_to_aws $STAGE
+    ;;
+  rm)
+    clean_up $STAGE
+  *)
+    echo "Usage: $0 {dev|stg|prd}"
+    exit 
+esac
 
