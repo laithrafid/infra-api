@@ -96,12 +96,12 @@ deploying_cluster_to_aws(){
 clean_up(){
   echo -e "${RED}==== Destroying Kubernetes Cluster ====${NC}"
   cd cluster/ 
-  terraform destroy --var-file=../create/"$1".tfvars
+  terraform destroy --var-file=../create/"$2".tfvars
   rm -rf .terraform*
   echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
   cd ../create
   echo -e "${RED}==== Destroying Pre-requisite Terraform Cluster ====${NC}"
-  terraform destroy --var-file="$1".tfvars
+  terraform destroy --var-file="$2".tfvars
   rm -rf "$1".tfvars .terraform*
   cd ../
   echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
@@ -131,7 +131,8 @@ case $STAGE in
     deploying_cluster_to_aws $STAGE
     ;;
   rm)
-    clean_up $STAGE
+    clean_up $STAGE $2
+    ;;
   *)
     echo "Usage: $0 {dev|stg|prd}"
     exit 
