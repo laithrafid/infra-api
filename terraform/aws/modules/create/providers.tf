@@ -1,4 +1,11 @@
 terraform {
+  cloud {
+    organization = "bayt"
+    hostname = "app.terraform.io"
+    workspaces {
+      name = "infra-api-aws"
+      }
+  }
   required_providers {
     aws = {
       source = "hashicorp/aws"

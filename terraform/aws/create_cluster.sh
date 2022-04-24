@@ -29,16 +29,17 @@ DNS_ZONE=kps.bayt.cloud
 REGION=$(aws configure get region)
 AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
 AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
-NAME="api.${DNS_ZONE}"
+CLUSTER_NAME="api.${DNS_ZONE}"
+SSH_NAME="kops-${STAGE}ssh"
 STAGE="$1"
 KOPS_STATE_S3="kops-${STAGE}"
 
-cd $PWD/modules/
+echo -e "${UBLUE}=== your current directort===$PWD ${NC}"
 
 ### Functions 
 
 create_tfvars(){
-cd create/
+cd modules/create/
 cat << EOF > "$1".tfvars
     access_key_id="${AWS_ACCESS_KEY_ID}"
     secret_access_key="${AWS_SECRET_ACCESS_KEY}"
@@ -46,27 +47,27 @@ cat << EOF > "$1".tfvars
     region="${REGION}"
     kops_state="${KOPS_STATE_S3}"
 EOF
-cd ../
+cd ../../
 }
 run_create_module(){
   echo -e "${BLUE}==== Applying Pre-requisite Terraform ====${NC}"
-  cd create/
+  cd modules/create/
   terraform init
   terraform plan --var-file="$1".tfvars
   terraform apply -auto-approve -input=false --var-file="$1".tfvars
   echo "AWS_KOPS_ACCESS_KEY_ID=$(terraform state show aws_iam_access_key.kops | grep "id" | cut -d= -f2 | awk '{$1=$1};1')" >> "$1".tfvars
   echo "AWS_KOPS_SECRET_ACCESS_KEY=$(terraform state show aws_iam_access_key.kops | grep "secret" | cut -d= -f2 | awk '{$1=$1};1')" >> "$1".tfvars
-  cd ../
+  cd ../../
   echo -e "${GREEN}==== Done Deploying Pre-requisite Terraform ====${NC}"
   echo ''
 }
 create_ssh_key(){
   echo -e "${BLUE}==== Creating Keypair ====${NC}"
-  cd cluster/
-  ssh-keygen -A -t rsa -C ${NAME} -f ${NAME}.pem
-  PUBKEY=$(pwd)/modules/create/${NANE}.pem.pub
-  aws ec2 import-key-pair --key-name ${NAME} --public-key-material file://${PUBKEY}
-  cd ../
+  cd modules/create/
+  ssh-keygen -A -t rsa -C ${SSH_NAME} -f ${SSH_NAME}.pem
+  PUBKEY=/modules/create/${SSH_NANE}.pem.pub
+  aws ec2 import-key-pair --key-name ${SSH_NAME} --public-key-material file://${PUBKEY}
+  cd ../../
   echo -e "${GREEN}==== Done Creating Keypair ====${NC}"
   echo ''
 }
@@ -79,7 +80,7 @@ create_terraform_manifest(){
   --dns-zone ${DNS_ZONE} --node-size t3.medium \
   --master-size t3.medium --topology private \
   --networking calico --ssh-public-key=${PUBKEY} \
-  --bastion --authorization RBAC --out=cluster --target=terraform ${NAME}
+  --bastion --authorization RBAC --out=cluster --target=terraform ${CLUSTER_NAME}
   cd ../
   echo -e "${GREEN}==== Done Creating Cluster Terraform ====${NC}"
   echo ''
@@ -134,7 +135,7 @@ case $STAGE in
     clean_up $STAGE $2
     ;;
   *)
-    echo "Usage: $0 {dev|stg|prd}"
+    echo "Usage: $0 {dev|stg|prd|rm(dev|stg|prd)}"
     exit 
 esac
 
