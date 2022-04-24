@@ -34,7 +34,7 @@ SSH_NAME="kops-${STAGE}ssh"
 STAGE="$1"
 KOPS_STATE_S3="kops-${STAGE}"
 
-echo -e "${UBLUE}=== your current directort===$PWD ${NC}"
+echo -e "${UYELLOW}=== your current directort===$PWD ${NC}"
 
 ### Functions 
 
@@ -73,7 +73,7 @@ create_ssh_key(){
 }
 create_terraform_manifest(){
   echo -e "${BLUE}==== Creating Cluster Terraform ====${NC}"
-  cd cluster/
+  cd modules/cluster/
   kops create cluster --cloud aws --state=s3://${KOPS_STATE_S3} --node-count 3 \
   --zones ${REGION}a,${REGION}b,${REGION}d \
   --master-zones ${REGION}a,${REGION}b,${REGION}d \
@@ -81,22 +81,22 @@ create_terraform_manifest(){
   --master-size t3.medium --topology private \
   --networking calico --ssh-public-key=${PUBKEY} \
   --bastion --authorization RBAC --out=cluster --target=terraform ${CLUSTER_NAME}
-  cd ../
+  cd ../../
   echo -e "${GREEN}==== Done Creating Cluster Terraform ====${NC}"
   echo ''
 }
 deploying_cluster_to_aws(){
   echo -e "${BLUE}==== Deploying Cluster Terraform ====${NC}"
-  cd cluster  
+  cd modules/cluster/
   terraform init
   terraform plan --var-file=../create/"$1".tfvars
   terraform apply -auto-approve -input=false  --var-file=../create/"$1".tfvars
-  cd ../
+  cd ../../
   echo -e "${GREEN}==== Done Deploying Cluster Terraform ====${NC}"
 }
 clean_up(){
   echo -e "${RED}==== Destroying Kubernetes Cluster ====${NC}"
-  cd cluster/ 
+  cd modules/cluster/ 
   terraform destroy --var-file=../create/"$2".tfvars
   rm -rf .terraform*
   echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
@@ -104,7 +104,7 @@ clean_up(){
   echo -e "${RED}==== Destroying Pre-requisite Terraform Cluster ====${NC}"
   terraform destroy --var-file="$2".tfvars
   rm -rf "$1".tfvars .terraform*
-  cd ../
+  cd ../../
   echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
 }
 
