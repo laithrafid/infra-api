@@ -61,8 +61,8 @@ run_create_module(){
 create_tfvars2(){
 cd modules/create
 cat << EOF > ../cluster/"$1".tfvars
-    AWS_KOPS_ACCESS_KEY_ID_key_id="$(terraform output -json | jq ".id.value")"
-    AWS_KOPS_SECRET_ACCESS_KEY="$(terraform output -json | jq ".secret.value")"
+    AWS_KOPS_ACCESS_KEY_ID_key_id=$(terraform output -json | jq ".id.value")
+    AWS_KOPS_SECRET_ACCESS_KEY=$(terraform output -json | jq ".secret.value")
     stage="${STAGE}"
     region="${REGION}"
     kops_state="${KOPS_STATE_S3}"
