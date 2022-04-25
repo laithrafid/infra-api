@@ -3,9 +3,10 @@ terraform {
     organization = "bayt"
     hostname = "app.terraform.io"
     workspaces {
-      name = "infra-api-aws"
+      name = "infra-api-aws-pre"
       }
   }
+  required_version = ">= 0.15.0"
   required_providers {
     aws = {
       source = "hashicorp/aws"
@@ -13,6 +14,7 @@ terraform {
     }
   }
 }
+
 provider "aws" {
   region      = var.region
   access_key  = var.access_key_id
