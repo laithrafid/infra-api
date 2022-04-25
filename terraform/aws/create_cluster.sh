@@ -108,12 +108,12 @@ deploying_cluster_to_aws(){
 clean_up(){
   echo -e "${RED}==== Destroying Kubernetes Cluster ====${NC}"
   cd modules/cluster/ 
-  terraform destroy --var-file="$2".tfvars
+  terraform destroy -auto-approve --var-file="$2".tfvars
   rm -rf .terraform* "$2".tfvars ${SSH_NAME}.pem.pub Kubernetes.tf data/
   echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
   cd ../create
   echo -e "${RED}==== Destroying Pre-requisite Terraform Cluster ====${NC}"
-  terraform destroy --var-file="$2".tfvars
+  terraform destroy -auto-approve --var-file="$2".tfvars
   rm -rf "$2".tfvars .terraform* ${SSH_NAME}.pem
   cd ../../
   echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
