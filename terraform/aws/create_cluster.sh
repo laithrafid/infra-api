@@ -110,13 +110,13 @@ clean_up(){
   cd modules/cluster/ 
   terraform destroy -auto-approve --var-file="$2".tfvars
   rm -rf .terraform* "$2".tfvars ${SSH_NAME}.pem.pub Kubernetes.tf data/
-  echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
+  echo -e "${YELLOW}==== Done Destroying Kubernetes Cluster ====${NC}"
   cd ../create
   echo -e "${RED}==== Destroying Pre-requisite Terraform Cluster ====${NC}"
   terraform destroy -auto-approve --var-file="$2".tfvars
   rm -rf "$2".tfvars .terraform* ${SSH_NAME}.pem
   cd ../../
-  echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
+  echo -e "${YELLOW}==== Done Destroying Pre-requisite Terraform Cluster ====${NC}"
 }
 
 # Logic
@@ -149,7 +149,6 @@ case $STAGE in
     clean_up $STAGE $2
     ;;
   *)
-    echo "Usage: $0 {dev|stg|prd|rm(dev|stg|prd)}"
+    echo "Usage: $0 {dev|stg|prd|rm {dev|stg|prd} }"
     exit 
 esac
-
