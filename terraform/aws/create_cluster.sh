@@ -99,8 +99,8 @@ create_terraform_manifest(){
 deploying_cluster_to_aws(){
   echo -e "${BLUE}==== Deploying Cluster Terraform ====${NC}"
   cd modules/cluster/
-  sed '/required_providers/,/^$/d' terraform.tf
-  sed '/provider "aws"/,/^$/d' terraform.tf
+  sed '/required_providers/,/^$/d' kubernetes.tf
+  sed '/provider "aws"/,/^$/d' kubernetes.tf
   terraform init
   terraform plan --var-file="$1".tfvars 
   terraform apply -auto-approve -input=false  --var-file="$1".tfvars
