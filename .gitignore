@@ -29,3 +29,5 @@ terraform/googlecloud/modules/gke_create/terraform.tfstate.backup
 */*/*/*/dev.tfvars
 terraform/aws/modules/create/dev.tfvars
 terraform/aws/modules/create/terraform.tfstate.backup
+terraform/aws/modules/cluster/kops-ssh.pem.pub
+terraform/aws/modules/create/kops-ssh.pem

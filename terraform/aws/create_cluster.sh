@@ -25,14 +25,14 @@ UPURPLE='\033[4;35m'
 UCYAN='\033[4;36m'
 UWHITE='\033[4;37m'
 ## VARS AND CONST
-DNS_ZONE=kps.bayt.cloud
+DNS_ZONE=kops.bayt.cloud
 REGION=$(aws configure get region)
 AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
 AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
 CLUSTER_NAME="api.${DNS_ZONE}"
 SSH_NAME="kops-${STAGE}ssh"
 STAGE="$1"
-KOPS_STATE_S3="kops-${STAGE}"
+KOPS_STATE_S3="kops-${STAGE}-unique"
 
 echo -e "${UYELLOW}=== your current directort===$PWD ${NC}"
 
@@ -55,8 +55,8 @@ run_create_module(){
   terraform init
   terraform plan --var-file="$1".tfvars
   terraform apply -auto-approve -input=false --var-file="$1".tfvars
-  echo "AWS_KOPS_ACCESS_KEY_ID=$(terraform state show aws_iam_access_key.kops | grep "id" | cut -d= -f2 | awk '{$1=$1};1')" >> "$1".tfvars
-  echo "AWS_KOPS_SECRET_ACCESS_KEY=$(terraform state show aws_iam_access_key.kops | grep "secret" | cut -d= -f2 | awk '{$1=$1};1')" >> "$1".tfvars
+  echo "AWS_KOPS_ACCESS_KEY_ID=$(terraform output -json | jq ".id.value")" >> "$1".tfvars
+  echo "AWS_KOPS_SECRET_ACCESS_KEY=$( terraform output -json | jq ".secret.value")" >> "$1".tfvars
   cd ../../
   echo -e "${GREEN}==== Done Deploying Pre-requisite Terraform ====${NC}"
   echo ''
@@ -64,9 +64,10 @@ run_create_module(){
 create_ssh_key(){
   echo -e "${BLUE}==== Creating Keypair ====${NC}"
   cd modules/create/
-  ssh-keygen -A -t rsa -C ${SSH_NAME} -f ${SSH_NAME}.pem
-  PUBKEY=/modules/create/${SSH_NANE}.pem.pub
-  aws ec2 import-key-pair --key-name ${SSH_NAME} --public-key-material file://${PUBKEY}
+  ssh-keygen -t rsa -C ${SSH_NAME} -f ${SSH_NAME}.pem
+  PUBKEY="${SSH_NAME}".pem.pub
+  aws ec2 import-key-pair --key-name "${SSH_NAME}" --public-key-material fileb://"${PUBKEY}"
+  mv "${PUBKEY}" ../cluster/"${PUBKEY}"
   cd ../../
   echo -e "${GREEN}==== Done Creating Keypair ====${NC}"
   echo ''
@@ -81,6 +82,7 @@ create_terraform_manifest(){
   --master-size t3.medium --topology private \
   --networking calico --ssh-public-key=${PUBKEY} \
   --bastion --authorization RBAC --out=cluster --target=terraform ${CLUSTER_NAME}
+  mv cluster/* . && rm -rf cluster
   cd ../../
   echo -e "${GREEN}==== Done Creating Cluster Terraform ====${NC}"
   echo ''
@@ -98,12 +100,12 @@ clean_up(){
   echo -e "${RED}==== Destroying Kubernetes Cluster ====${NC}"
   cd modules/cluster/ 
   terraform destroy --var-file=../create/"$2".tfvars
-  rm -rf .terraform*
+  rm -rf .terraform* ${SSH_NAME}.pem*
   echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
   cd ../create
   echo -e "${RED}==== Destroying Pre-requisite Terraform Cluster ====${NC}"
   terraform destroy --var-file="$2".tfvars
-  rm -rf "$1".tfvars .terraform*
+  rm -rf "$1".tfvars .terraform* ${SSH_NAME}.pem*
   cd ../../
   echo -e "${YELLOW}==== Done Creating Cluster Terraform ====${NC}"
 }
